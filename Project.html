@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DayDReam's Lab | Cyber Space</title>
+    <link rel="icon" href="./cy.png" type="image/x-icon">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&family=Fira+Code:wght@400;500&family=Noto+Serif+SC:wght@400;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            /* 暗黑模式核心变量 */
+            --bg-color: #0d1117;
+            --main-text: #e6edf3;
+            --meta-text: #8b949e;
+            --accent-color: #58a6ff;
+            --glass-bg: rgba(22, 27, 34, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --nav-bg: rgba(13, 17, 23, 0.8);
+            --card-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            --banner-overlay: rgba(13, 17, 23, 0.6);
+            --toggle-bg: rgba(255, 255, 255, 0.05);
+            --terminal-green: #4ade80;
+            --terminal-bg-base: #0a0a0a;
+            --shimmer-col: rgba(255, 255, 255, 0.15);
+            --shimmer-grad: linear-gradient(to right, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.1) 40%, rgba(255, 255, 255, 0.8) 50%, rgba(255, 255, 255, 0.1) 60%, rgba(255, 255, 255, 0.1) 100%);
+            --particle-color: rgba(88, 166, 255, 0.1);
+        }
+
+        [data-theme="light"] {
+            /* 亮色模式核心变量 */
+            --bg-color: #f6f8fa;
+            --main-text: #1f2328;
+            --meta-text: #636c76;
+            --accent-color: #0969da;
+            --glass-bg: rgba(255, 255, 255, 0.8);
+            --glass-border: rgba(31, 35, 40, 0.1);
+            --nav-bg: rgba(255, 255, 255, 0.9);
+            --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            --banner-overlay: rgba(255, 255, 255, 0.3);
+            --toggle-bg: rgba(0, 0, 0, 0.05);
+            --terminal-green: #059669;
+            --terminal-bg-base: #e2e8f0;
+            --shimmer-col: rgba(0, 0, 0, 0.1);
+            --shimmer-grad: linear-gradient(to right, rgba(0, 0, 0, 0.05) 0%, rgba(0, 0, 0, 0.05) 40%, rgba(0, 0, 0, 0.7) 50%, rgba(0, 0, 0, 0.05) 60%, rgba(0, 0, 0, 0.05) 100%);
+            --particle-color: rgba(0, 0, 0, 0.05);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: background-color 0.5s ease, color 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease, opacity 0.5s ease;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', 'Noto Serif SC', serif;
+            background-color: var(--bg-color);
+            color: var(--main-text);
+            line-height: 1.8;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.8;
+            transition: none;
+        }
+
+        .side-bar-left {
+            position: fixed;
+            left: 40px;
+            bottom: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 1001;
+            animation: slideInUp 1s ease 4s both;
+        }
+
+        .side-bar-left .social-link {
+            writing-mode: vertical-rl;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-size: 0.7rem;
+            color: var(--meta-text);
+            text-decoration: none;
+            margin-bottom: 25px;
+            transition: 0.3s;
+        }
+
+        .side-bar-left .social-link:hover {
+            color: var(--accent-color);
+            transform: translateY(-5px);
+        }
+
+        .side-bar-left::after {
+            content: '';
+            width: 1px;
+            height: 100px;
+            background: var(--glass-border);
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(100px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        #opening-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index: 9999;
+            pointer-events: none;
+            animation: fadeOutOpening 0.8s ease-in-out 3.1s forwards;
+        }
+
+        .opening-text-slider {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            color: #fff;
+            font-size: 4.5rem;
+            font-family: 'Segoe UI', sans-serif;
+            font-weight: bold;
+            letter-spacing: 4px;
+            white-space: nowrap;
+            opacity: 0;
+            animation: slideLeftOpening 3.7s forwards;
+        }
+
+        .main-title {
+            top: calc(50% - 2.25rem);
+            z-index: 10;
+        }
+
+        .welcome-1 {
+            top: 8%;
+            font-size: 2.5rem;
+            color: rgba(255, 255, 255, 0.4);
+            animation: slideLeftPos1 3.7s forwards;
+            animation-delay: 0.25s;
+        }
+
+        .welcome-2 {
+            top: 20%;
+            font-size: 3.5rem;
+            color: rgba(255, 255, 255, 0.6);
+            animation: slideLeftPos2 3.7s forwards;
+            animation-delay: 0.1s;
+        }
+
+        .welcome-3 {
+            top: 35%;
+            font-size: 2.8rem;
+            color: rgba(255, 255, 255, 0.5);
+            animation: slideLeftPos3 3.7s forwards;
+            animation-delay: 0.35s;
+        }
+
+        .welcome-4 {
+            top: 65%;
+            font-size: 4rem;
+            color: rgba(255, 255, 255, 0.55);
+            animation: slideLeftPos1 3.7s forwards;
+            animation-delay: 0.15s;
+        }
+
+        .welcome-5 {
+            top: 80%;
+            font-size: 3rem;
+            color: rgba(255, 255, 255, 0.65);
+            animation: slideLeftPos4 3.7s forwards;
+            animation-delay: 0.4s;
+        }
+
+        .welcome-6 {
+            top: 92%;
+            font-size: 2rem;
+            color: rgba(255, 255, 255, 0.4);
+            animation: slideLeftPos2 3.7s forwards;
+            animation-delay: 0.2s;
+        }
+
+        .project-1 {
+            top: 15%;
+            font-size: 1.8rem;
+            color: rgba(255, 255, 255, 0.20);
+            animation: slideLeftPos3 3.7s forwards;
+            animation-delay: 0.2s;
+        }
+
+        .project-2 {
+            top: 45%;
+            font-size: 2.2rem;
+            color: rgba(255, 255, 255, 0.18);
+            animation: slideLeftPos4 3.7s forwards;
+            animation-delay: 0.4s;
+        }
+
+        .project-3 {
+            top: 72%;
+            font-size: 2.5rem;
+            color: rgba(255, 255, 255, 0.22);
+            animation: slideLeftPos1 3.7s forwards;
+            animation-delay: 0.55s;
+        }
+
+        .project-4 {
+            top: 85%;
+            left: 60%;
+            font-size: 3rem;
+            color: rgba(255, 255, 255, 0.22);
+            animation: slideLeftPos5 3.7s forwards;
+            animation-delay: 0.15s;
+        }
+
+        @keyframes slideLeftOpening {
+            0% {
+                transform: translateX(100vw);
+                opacity: 0;
+                animation-timing-function: cubic-bezier(0.1, 0.9, 0.2, 1);
+            }
+
+            56% {
+                transform: translateX(0);
+                opacity: 1;
+            }
+
+            66% {
+                transform: translateX(0);
+                opacity: 1;
+                animation-timing-function: cubic-bezier(0.8, 0, 0.8, 0.2);
+            }
+
+            100% {
+                transform: translateX(-100vw);
+                opacity: 0;
+            }
+        }
+
+        @keyframes slideLeftPos1 {
+            0% {
+                transform: translateX(100vw);
+                opacity: 0;
+                animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+            }
+
+            56% {
+                transform: translateX(-20vw);
+                opacity: 1;
+            }
+
+            66% {
+                transform: translateX(-20vw);
+                opacity: 1;
+                animation-timing-function: cubic-bezier(0.8, 0, 0.8, 0.2);
+            }
+
+            100% {
+                transform: translateX(-100vw);
+                opacity: 0;
+            }
+        }
+
+        @keyframes slideLeftPos2 {
+            0% {
+                transform: translateX(100vw);
+                opacity: 0;
+                animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+            }
+
+            56% {
+                transform: translateX(15vw);
+                opacity: 1;
+            }
+
+            66% {
+                transform: translateX(15vw);
+                opacity: 1;
+                animation-timing-function: cubic-bezier(0.8, 0, 0.8, 0.2);
+            }
+
+            100% {
+                transform: translateX(-100vw);
+                opacity: 0;
+            }
+        }
+
+        @keyframes slideLeftPos3 {
+            0% {
+                transform: translateX(100vw);
+                opacity: 0;
+                animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+            }
+
+            56% {
+                transform: translateX(-5vw);
+                opacity: 1;
+            }
+
+            66% {
+                transform: translateX(-5vw);
+                opacity: 1;
+                animation-timing-function: cubic-bezier(0.8, 0, 0.8, 0.2);
+            }
+
+            100% {
+                transform: translateX(-100vw);
+                opacity: 0;
+            }
+        }
+
+        @keyframes slideLeftPos4 {
+            0% {
+                transform: translateX(100vw);
+                opacity: 0;
+                animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+            }
+
+            56% {
+                transform: translateX(25vw);
+                opacity: 1;
+            }
+
+            66% {
+                transform: translateX(25vw);
+                opacity: 1;
+                animation-timing-function: cubic-bezier(0.8, 0, 0.8, 0.2);
+            }
+
+            100% {
+                transform: translateX(-100vw);
+                opacity: 0;
+            }
+        }
+
+        @keyframes slideLeftPos5 {
+            0% {
+                transform: translateX(50vw) translateX(-50%);
+                opacity: 0;
+                animation-timing-function: cubic-bezier(0.1, 0.9, 0.2, 1);
+            }
+
+            30% {
+                transform: translateX(-50%);
+                opacity: 1;
+            }
+
+            66% {
+                transform: translateX(-50%);
+                opacity: 1;
+                animation-timing-function: cubic-bezier(0.8, 0, 0.9, 0.1);
+            }
+
+            100% {
+                transform: translateX(-150vw);
+                opacity: 0;
+            }
+        }
+
+        @keyframes fadeOutOpening {
+            0% {
+                opacity: 1;
+                visibility: visible;
+            }
+
+            100% {
+                opacity: 0;
+                visibility: hidden;
+                display: none;
+            }
+        }
+
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            height: 100px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 8%;
+            z-index: 1000;
+        }
+
+        nav.scrolled {
+            background: var(--nav-bg);
+            backdrop-filter: blur(25px);
+            height: 70px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+
+        .nav-brand {
+            font-weight: 900;
+            font-size: 1.4rem;
+            letter-spacing: 5px;
+            color: var(--main-text);
+            text-decoration: none;
+        }
+
+        .theme-switch-wrapper {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            padding: 4px;
+            background: var(--toggle-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            width: 58px;
+            height: 30px;
+            position: relative;
+        }
+
+        .theme-switch-thumb {
+            width: 22px;
+            height: 22px;
+            background: var(--accent-color);
+            border-radius: 50%;
+            position: absolute;
+            left: 4px;
+            transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .theme-switch-thumb svg {
+            width: 14px;
+            height: 14px;
+            fill: white;
+            transition: none;
+        }
+
+        [data-theme="light"] .theme-switch-thumb {
+            transform: translateX(28px);
+        }
+
+        .site-banner {
+            position: relative;
+            height: 85vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);
+            overflow: hidden;
+        }
+
+        #bg-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(var(--banner-overlay), var(--bg-color)), url('./dbp.jpg') center/cover no-repeat;
+            z-index: -1;
+            transform: scale(1.3);
+            transition: transform 0.3s ease-out, background 0.5s ease;
+            will-change: transform;
+        }
+
+        .banner-content h1 {
+            font-size: 6rem;
+            font-weight: 900;
+            letter-spacing: 25px;
+            color: var(--shimmer-col);
+            background: var(--shimmer-grad);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            text-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            animation: heroFadeIn 2s ease 3.5s both, shimmer 6s linear infinite 5s;
+            transition: color 0.5s ease;
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: -200% center;
+            }
+
+            100% {
+                background-position: 200% center;
+            }
+        }
+
+        @keyframes heroFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+                filter: blur(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+                filter: blur(0px);
+            }
+        }
+
+        .main-grid {
+            max-width: 1400px;
+            margin: -120px auto 50px;
+            padding: 0 60px;
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 40px;
+        }
+
+        .post-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(30px);
+            border: 1px solid var(--glass-border);
+            padding: 50px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: var(--card-shadow);
+            cursor: pointer;
+            position: relative;
+        }
+
+        .post-card:hover {
+            border-color: var(--accent-color);
+            transform: translateY(-8px);
+        }
+
+        .post-card.pulled-out {
+            transform: scale(0.98) translateY(10px);
+            opacity: 0.8;
+        }
+
+        /* --- 新增：增强版的 Syncing 样式 --- */
+        .sync-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.7rem;
+            color: var(--meta-text);
+            margin-bottom: 15px;
+            opacity: 0.7;
+        }
+
+        .sync-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background-color: var(--accent-color);
+            animation: pulseSync 1.5s infinite;
+        }
+
+        @keyframes pulseSync {
+            0% {
+                opacity: 0.3;
+                transform: scale(0.8);
+            }
+
+            50% {
+                opacity: 1;
+                transform: scale(1.1);
+            }
+
+            100% {
+                opacity: 0.3;
+                transform: scale(0.8);
+            }
+        }
+
+        /* ------------------------------- */
+
+        .sidebar-right {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .monitor-card {
+            background-color: var(--terminal-bg-base);
+            border: 1px solid var(--accent-color);
+            border-radius: 12px;
+            padding: 25px;
+            font-family: 'Fira Code', monospace;
+            box-shadow: 0 0 20px rgba(88, 166, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .monitor-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, transparent 100%);
+            pointer-events: none;
+        }
+
+        .stat-bar-bg {
+            width: 100%;
+            height: 6px;
+            background: rgba(128, 128, 128, 0.15);
+            border-radius: 3px;
+            margin-top: 6px;
+            overflow: hidden;
+        }
+
+        .stat-bar-fill {
+            height: 100%;
+            background: var(--terminal-green);
+            width: 0%;
+            transition: width 0.8s ease, background-color 0.5s ease;
+        }
+
+        .monitor-logs {
+            font-size: 0.7rem;
+            color: var(--terminal-green);
+            height: 80px;
+            overflow: hidden;
+            line-height: 1.6;
+            margin-top: 15px;
+            border-top: 1px solid rgba(128, 128, 128, 0.1);
+            padding-top: 10px;
+        }
+
+        .sidebar-tags-widget {
+            background: var(--glass-bg);
+            backdrop-filter: blur(30px);
+            border: 1px solid var(--glass-border);
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: var(--card-shadow);
+        }
+
+        .sidebar-tags-widget h3 {
+            font-size: 0.7rem;
+            letter-spacing: 2px;
+            color: var(--accent-color);
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        .tag-cloud {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .tag-item {
+            font-size: 0.65rem;
+            padding: 4px 12px;
+            border-radius: 20px;
+            background: rgba(128, 128, 128, 0.05);
+            border: 1px solid var(--glass-border);
+            color: var(--meta-text);
+            cursor: pointer;
+        }
+
+        .tag-item:hover {
+            border-color: var(--accent-color);
+            color: var(--main-text);
+            background: rgba(88, 166, 255, 0.1);
+        }
+
+        .profile-card-wrapper {
+            background: var(--glass-bg);
+            backdrop-filter: blur(30px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+        }
+
+        .site-footer {
+            margin-top: 100px;
+            padding: 80px 8% 40px;
+            background: linear-gradient(to bottom, transparent, var(--bg-color));
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .footer-top {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 60px;
+            margin-bottom: 60px;
+        }
+
+        .footer-brand h2 {
+            font-weight: 900;
+            letter-spacing: 5px;
+            margin-bottom: 20px;
+        }
+
+        .footer-brand p {
+            color: var(--meta-text);
+            font-size: 0.85rem;
+            max-width: 300px;
+        }
+
+        .footer-links h3 {
+            font-size: 0.7rem;
+            letter-spacing: 2px;
+            color: var(--accent-color);
+            margin-bottom: 25px;
+            text-transform: uppercase;
+        }
+
+        .footer-links ul {
+            list-style: none;
+        }
+
+        .footer-links ul li {
+            margin-bottom: 12px;
+        }
+
+        .footer-links ul li a {
+            text-decoration: none;
+            color: var(--meta-text);
+            font-size: 0.85rem;
+        }
+
+        .footer-links ul li a:hover {
+            color: var(--main-text);
+            padding-left: 5px;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid var(--glass-border);
+            color: var(--meta-text);
+            font-size: 0.7rem;
+            letter-spacing: 1px;
+        }
+
+        @media (max-width: 1150px) {
+            .footer-top {
+                grid-template-columns: 1fr 1fr;
+                gap: 40px;
+            }
+
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body data-theme="dark">
+    <canvas id="bg-canvas"></canvas>
+
+    <div class="side-bar-left">
+        <a href="https://github.com/dayDReam-10" class="social-link" target="_blank">GITHUB</a>
+        <a href="#" class="social-link">RSS FEED</a>
+    </div>
+
+    <div id="opening-screen">
+        <div class="opening-text-slider project-1">RE-PWN-Writeup</div>
+        <div class="opening-text-slider welcome-2" style="opacity: 0.3;">w e l c o m e</div>
+        <div class="opening-text-slider project-2">MCplugins</div>
+        <div class="opening-text-slider main-title">D a y D R e a m ' s &nbsp; L a b</div>
+        <div class="opening-text-slider project-3">Java</div>
+        <div class="opening-text-slider project-4">Math</div>
+    </div>
+
+    <nav id="navbar">
+        <div class="nav-left">
+            <a href="#" class="nav-brand">DAYDREAM</a>
+        </div>
+        <div class="theme-switch-wrapper" id="theme-toggle">
+            <div class="theme-switch-thumb">
+                <!-- 太阳（月亮）切换图标，配色更明显 -->
+                <svg class="icon-sun" viewBox="0 0 24 24" style="display: block;" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="12" cy="12" r="5" fill="#FFD600" />
+                    <g stroke="#FFD600" stroke-width="2">
+                        <line x1="12" y1="2" x2="12" y2="5" />
+                        <line x1="12" y1="19" x2="12" y2="22" />
+                        <line x1="2" y1="12" x2="5" y2="12" />
+                        <line x1="19" y1="12" x2="22" y2="12" />
+                        <line x1="4.22" y1="4.22" x2="6.34" y2="6.34" />
+                        <line x1="17.66" y1="17.66" x2="19.78" y2="19.78" />
+                        <line x1="4.22" y1="19.78" x2="6.34" y2="17.66" />
+                        <line x1="17.66" y1="6.34" x2="19.78" y2="4.22" />
+                    </g>
+                </svg>
+                <svg class="icon-moon" viewBox="0 0 24 24" style="display: none;" xmlns="http://www.w3.org/2000/svg">
+                    <!-- 更显眼的弯月+星星图标 -->
+                    <path d="M21 15.5A9 9 0 1 1 12 3a7 7 0 0 0 9 12.5z" fill="#fff" />
+                    <circle cx="17.5" cy="7.5" r="1.2" fill="#58a6ff" />
+                    <circle cx="15.2" cy="5.8" r="0.5" fill="#58a6ff" />
+                    <circle cx="19" cy="10" r="0.6" fill="#58a6ff" />
+                </svg>
+            </div>
+        </div>
+    </nav>
+
+    <header class="site-banner">
+        <div id="bg-image"></div>
+        <div class="banner-content">
+            <h1>DayDReam</h1>
+            <p style="color: var(--main-text); opacity: 0.4; letter-spacing: 8px; margin-top: 10px;">REVERSE & CORE
+                ARCHITECT</p>
+        </div>
+    </header>
+
+    <main class="main-grid">
+        <div class="content-stream">
+            <article class="post-card"
+                onclick="handleCardClick(this, 'https://github.com/dayDReam-10/RE-PWN-Writeups')">
+                <span style="color:var(--accent-color); font-size:0.7rem; letter-spacing:3px;">SYSTEM.LOG</span>
+                <h2 style="margin: 15px 0;">RE-PWN-Writeups</h2>
+
+                <div class="sync-label">
+                    <div class="sync-dot"></div>
+                    <span id="re-pwn-update">SYNCING_REMOTE_DATA...</span>
+                </div>
+
+                <p style="color:var(--meta-text);">逆向工程与 Pwn 漏洞利用的实战记录。探索二进制世界的深层逻辑。</p>
+            </article>
+
+            <article class="post-card" onclick="handleCardClick(this, 'https://github.com/dayDReam-10/McPlugins')">
+                <span style="color:var(--accent-color); font-size:0.7rem; letter-spacing:3px;">DEV.NOTE</span>
+                <h2 style="margin: 15px 0;">McPlugins / ExpRule Framework</h2>
+
+                <div class="sync-label">
+                    <div class="sync-dot"></div>
+                    <span id="works-update">INITIALIZING_GIT_CONNECTION...</span>
+                </div>
+
+                <p style="color:var(--meta-text);">基于高性能事件驱动的插件框架。致力于打造最轻量、最稳定的游戏核心模块。</p>
+            </article>
+        </div>
+
+        <aside class="sidebar-right">
+            <div class="profile-card-wrapper">
+                <div class="profile-sidebar"
+                    style="padding: 25px 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; height: fit-content;">
+                    <div style="border-radius: 50%; overflow: hidden; width: 100px; height: 100px; box-shadow: 0 8px 25px rgba(0,0,0,0.15); margin-top: 0px; transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); cursor: pointer;"
+                        onmouseover="this.style.transform='rotate(360deg) scale(1.05)'"
+                        onmouseout="this.style.transform='rotate(0deg) scale(1)'">
+                        <img src="./images.jpg" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+
+                    <div style="text-align: center; margin-top: 10px;">
+                        <h2
+                            style="font-size: 1.6rem; font-weight: 700; color: var(--main-text); margin: 0; letter-spacing: -0.5px;">
+                            DayDReam</h2>
+                        <p
+                            style="font-size: 0.8rem; color: var(--meta-text); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 5px;">
+                            TURNING CHAOS INTO ALGORITHMS</p>
+                    </div>
+
+                    <div
+                        style="display: flex; justify-content: space-around; width: 100%; margin: 10px 0; padding: 15px 0; border-top: 1px solid var(--glass-border); border-bottom: 1px solid var(--glass-border);">
+                        <div style="text-align: center;">
+                            <div style="font-size: 0.8rem; color: var(--meta-text); margin-bottom: 4px;">Repos</div>
+                            <div id="github-repos"
+                                style="font-size: 1.3rem; font-weight: 500; color: var(--accent-color);">-</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 0.8rem; color: var(--meta-text); margin-bottom: 4px;">Followers</div>
+                            <div id="github-followers"
+                                style="font-size: 1.3rem; font-weight: 500; color: var(--accent-color);">-</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 0.8rem; color: var(--meta-text); margin-bottom: 4px;">Following</div>
+                            <div id="github-following"
+                                style="font-size: 1.3rem; font-weight: 500; color: var(--accent-color);">-</div>
+                        </div>
+                    </div>
+
+                    <button onclick="window.open('https://github.com/dayDReam-10', '_blank')"
+                        style="background: var(--accent-color); color: white; border: none; padding: 10px 25px; border-radius: 25px; font-size: 0.8rem; font-weight: 700; cursor: pointer; transition: 0.3s; width: 85%; margin-top: 10px;">FOLLOW
+                        ME</button>
+                </div>
+            </div>
+
+            <!-- 日历模块 -->
+            <div class="monitor-card" style="padding: 20px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <span
+                        style="font-size: 0.65rem; color: var(--accent-color); letter-spacing: 2px; font-weight: bold;">CALENDAR</span>
+                    <span id="calendar-month-year"
+                        style="font-size: 0.75rem; color: var(--main-text); font-weight: bold;"></span>
+                </div>
+                <div
+                    style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; margin-bottom: 10px;">
+                    <div style="font-size: 0.65rem; color: var(--meta-text);">Su</div>
+                    <div style="font-size: 0.65rem; color: var(--meta-text);">Mo</div>
+                    <div style="font-size: 0.65rem; color: var(--meta-text);">Tu</div>
+                    <div style="font-size: 0.65rem; color: var(--meta-text);">We</div>
+                    <div style="font-size: 0.65rem; color: var(--meta-text);">Th</div>
+                    <div style="font-size: 0.65rem; color: var(--meta-text);">Fr</div>
+                    <div style="font-size: 0.65rem; color: var(--meta-text);">Sa</div>
+                </div>
+                <div id="calendar-grid"
+                    style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center;">
+                    <!-- 日历网格动态生成 -->
+                </div>
+            </div>
+
+            <div class="sidebar-tags-widget">
+                <h3>Knowledge Tags</h3>
+                <div class="tag-cloud">
+                    <span class="tag-item">Pwn</span>
+                    <span class="tag-item">Reverse</span>
+                    <span class="tag-item">Kernel</span>
+                    <span class="tag-item">Java</span>
+                    <span class="tag-item">Minecraft</span>
+                    <span class="tag-item">Exploit</span>
+                    <span class="tag-item">Assembly</span>
+                    <span class="tag-item">Web3</span>
+                </div>
+            </div>
+        </aside>
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-top">
+            <div class="footer-brand">
+                <h2>DAYDREAM</h2>
+                <p>记录二进制世界的探索之旅，专注于逆向工程与系统底层开发。</p>
+            </div>
+            <div class="footer-links">
+                <h3>Navigations</h3>
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">Projects</a></li>
+                    <li><a href="#">Archive</a></li>
+                    <li><a href="#">About</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h3>Connect</h3>
+                <ul>
+                    <li><a href="#">GitHub</a></li>
+                    <li><a href="#">RSS Feed</a></li>
+                    <li><a href="#">Email</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            © 2024 DayDReam's Lab. Powered by Neural Engines. All rights reserved.
+        </div>
+    </footer>
+
+    <script>
+        // 背景图片随鼠标微动
+        const bgImg = document.querySelector('#bg-image');
+        window.addEventListener('mousemove', (e) => {
+            const mx = (e.clientX / window.innerWidth - 0.5) * 60;
+            const my = (e.clientY / window.innerHeight - 0.5) * 60;
+            bgImg.style.transform = `scale(1.3) translate(${mx}px, ${my}px)`;
+        });
+
+        // 模式切换，切换图标显示
+        const themeToggle = document.getElementById('theme-toggle');
+        const sunIcon = themeToggle.querySelector('.icon-sun');
+        const moonIcon = themeToggle.querySelector('.icon-moon');
+        function updateThemeIcon() {
+            const isDark = document.body.getAttribute('data-theme') === 'dark';
+            sunIcon.style.display = isDark ? 'none' : 'block';
+            moonIcon.style.display = isDark ? 'block' : 'none';
+        }
+        themeToggle.addEventListener('click', () => {
+            const current = document.body.getAttribute('data-theme');
+            const nextTheme = current === 'dark' ? 'light' : 'dark';
+            document.body.setAttribute('data-theme', nextTheme);
+            updateThemeIcon();
+        });
+        // 页面加载时初始化图标
+        updateThemeIcon();
+
+        // 粒子背景
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        let points = [];
+        function init() {
+            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+            points = Array.from({ length: 40 }, () => ({
+                x: Math.random() * canvas.width, y: Math.random() * canvas.height,
+                vx: (Math.random() - 0.5) * 0.4, vy: (Math.random() - 0.5) * 0.4
+            }));
+        }
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--particle-color').trim();
+            points.forEach((p, i) => {
+                p.x += p.vx; p.y += p.vy;
+                if (p.x < 0 || p.x > canvas.width) p.vx *= -1; if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+                points.slice(i + 1).forEach(p2 => {
+                    const d = Math.hypot(p.x - p2.x, p.y - p2.y);
+                    if (d < 200) { ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(p2.x, p2.y); ctx.stroke(); }
+                });
+            });
+            requestAnimationFrame(draw);
+        }
+        window.addEventListener('resize', init);
+        init(); draw();
+
+        // --- 新增：日历模块渲染逻辑 ---
+        function renderCalendar() {
+            const today = new Date();
+            const currentMonth = today.getMonth();
+            const currentYear = today.getFullYear();
+            const currentDate = today.getDate();
+
+            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            document.getElementById('calendar-month-year').innerText = `${monthNames[currentMonth]} ${currentYear}`;
+
+            const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+            const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+
+            const grid = document.getElementById('calendar-grid');
+            grid.innerHTML = '';
+
+            // 填充前面的空白
+            for (let i = 0; i < firstDay; i++) {
+                const emptyCell = document.createElement('div');
+                grid.appendChild(emptyCell);
+            }
+
+            // 填充日期
+            for (let i = 1; i <= daysInMonth; i++) {
+                const cell = document.createElement('div');
+                cell.innerText = i;
+                cell.style.fontSize = '0.8rem';
+                cell.style.padding = '5px 0';
+                cell.style.borderRadius = '5px';
+                cell.style.cursor = 'default';
+                cell.style.transition = '0.3s';
+
+                if (i === currentDate) {
+                    cell.style.backgroundColor = 'var(--accent-color)';
+                    cell.style.color = 'white';
+                    cell.style.fontWeight = 'bold';
+                } else {
+                    cell.style.color = 'var(--main-text)';
+                    cell.onmouseover = () => cell.style.backgroundColor = 'var(--toggle-bg)';
+                    cell.onmouseout = () => cell.style.backgroundColor = 'transparent';
+                }
+
+                grid.appendChild(cell);
+            }
+        }
+        renderCalendar();
+
+        // --- GitHub 数据获取核心修复 ---
+        async function fetchGitHub() {
+            const username = 'dayDReam-10';
+            try {
+                // 1. 获取用户信息 (Followers/Repos等)
+                const userRes = await fetch(`https://api.github.com/users/${username}`);
+                if (userRes.ok) {
+                    const user = await userRes.json();
+                    // 确保 ID 与 HTML 元素完全一致
+                    const repoEl = document.getElementById('github-repos');
+                    const followerEl = document.getElementById('github-followers');
+                    const followingEl = document.getElementById('github-following');
+
+                    if (repoEl) repoEl.innerText = user.public_repos ?? '0';
+                    if (followerEl) followerEl.innerText = user.followers ?? '0';
+                    if (followingEl) followingEl.innerText = user.following ?? '0';
+                    console.log("GitHub Profile Synced.");
+                }
+
+                // 2. 获取具体项目的更新时间
+                const repoConfigs = [
+                    { name: 'RE-PWN-Writeups', elId: 're-pwn-update' },
+                    { name: 'McPlugins', elId: 'works-update' }
+                ];
+
+                repoConfigs.forEach(async (config) => {
+                    try {
+                        const r = await fetch(`https://api.github.com/repos/${username}/${config.name}`);
+                        if (r.ok) {
+                            const d = await r.json();
+                            const el = document.getElementById(config.elId);
+                            if (el && d.pushed_at) {
+                                // 找到父容器中的指示灯并更新
+                                const parent = el.parentElement;
+                                const dot = parent.querySelector('.sync-dot');
+                                if (dot) {
+                                    dot.style.animation = 'none';
+                                    dot.style.backgroundColor = '#4ade80'; // 绿色表示连接正常
+                                }
+                                el.innerText = `LAST_PUSH: ${new Date(d.pushed_at).toLocaleDateString().replace(/\//g, '.')}`;
+                            }
+                        }
+                    } catch (e) { }
+                });
+            } catch (e) {
+                console.error("GitHub Sync Error", e);
+            }
+        }
+
+        // 页面加载后执行同步
+        window.addEventListener('load', fetchGitHub);
+
+        function handleCardClick(el, url) {
+            el.classList.add('pulled-out');
+            setTimeout(() => { window.open(url, '_blank'); el.classList.remove('pulled-out'); }, 300);
+        }
+
+        window.onscroll = () => {
+            const nav = document.getElementById('navbar');
+            if (window.scrollY > 100) nav.classList.add('scrolled');
+            else nav.classList.remove('scrolled');
+        };
+    </script>
+</body>
+
+</html>
