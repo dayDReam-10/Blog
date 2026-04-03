@@ -438,7 +438,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(var(--banner-overlay), var(--bg-color)), url('./dbp.jpg') center/cover no-repeat;
+            background: linear-gradient(var(--banner-overlay), var(--bg-color)), url('./assets/dbp.jpg') center/cover no-repeat;
             z-index: -1;
             transform: scale(1.3);
             transition: transform 0.3s ease-out, background 0.5s ease;
@@ -955,30 +955,7 @@
 
     <main class="main-grid">
         <div class="timeline-container" id="journal-timeline">
-            <!-- 笔记项示例 -->
-            <div class="timeline-item" data-date="2024-03-31" id="note-20240331">
-                <div class="timeline-dot"></div>
-                <div class="timeline-date">
-                    <span>2024.03.31 / 15:45</span>
-                    <span class="status-badge" style="color: #4ade80;">System Update</span>
-                </div>
-                <div class="timeline-card">
-                    <h3>全面模块化回归</h3>
-                    <p>本日完成了侧边栏的功能整合。个人名片、日历模块以及页脚状态栏全部就位。通过日历的点击事件，可以快速在笔记时间线中进行穿梭。</p>
-                </div>
-            </div>
-
-            <div class="timeline-item" data-date="2024-03-29" id="note-20240329">
-                <div class="timeline-dot"></div>
-                <div class="timeline-date">
-                    <span>2024.03.29 / 22:10</span>
-                    <span class="status-badge" style="color: #f87171;">Hotfix</span>
-                </div>
-                <div class="timeline-card">
-                    <h3>开场动画逻辑检查</h3>
-                    <p>确认了 7 层文字动画在所有设备上的同步性。贝塞尔曲线的平滑度是营造冷冽科技感的关键。</p>
-                </div>
-            </div>
+            <!-- 笔记将由 notes_data.js 自动生成在这里 -->
         </div>
 
         <aside class="sidebar">
@@ -989,7 +966,7 @@
                     <div style="border-radius: 50%; overflow: hidden; width: 100px; height: 100px; box-shadow: 0 8px 25px rgba(0,0,0,0.15); margin-top: 0px; transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); cursor: pointer;"
                         onmouseover="this.style.transform='rotate(360deg) scale(1.05)'"
                         onmouseout="this.style.transform='rotate(0deg) scale(1)'">
-                        <img src="./images.jpg" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;">
+                        <img src="./assets/images.jpg" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;">
                     </div>
                     <div style="text-align: center; margin-top: 10px;">
                         <h2
@@ -1354,6 +1331,65 @@
             if (e.target === blogOverlay) {
                 blogOverlay.classList.remove('active');
                 document.body.style.overflow = '';
+            }
+        });
+    </script>
+    <!-- 笔记数据文件加载 (通过 build_notes.ps1 生成) -->
+    <script>
+        // 强制每次加载最新的笔记数据，避免浏览器缓存
+        document.write('<script src="assets/notes_data.js?v=' + new Date().getTime() + '"><\/script>');
+    </script>
+    <script>
+        // 动态加载笔记逻辑
+        document.addEventListener('DOMContentLoaded', () => {
+            const timelineContainer = document.getElementById('journal-timeline');
+            const blogOverlay = document.getElementById('blog-modal-overlay');
+            const blogModalTitle = document.querySelector('.blog-modal-title');
+            const blogModalBody = document.querySelector('.blog-modal-body');
+
+            if (timelineContainer && typeof notesData !== 'undefined') {
+                timelineContainer.innerHTML = ''; // 清理挂载点
+                notesData.forEach(note => {
+                    const item = document.createElement('div');
+                    item.className = 'timeline-item';
+                    item.setAttribute('data-date', note.date);
+                    item.id = 'note-' + note.idDate;
+                    item.style.cursor = 'pointer'; // 变成手型，提示可点击
+                    
+                    item.innerHTML = `
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-date">
+                            <span>${note.datetime}</span>
+                            <span class="status-badge" style="color: ${note.color};">${note.status}</span>
+                        </div>
+                        <div class="timeline-card">
+                            <h3>${note.title}</h3>
+                            <p>${note.content}</p>
+                        </div>
+                    `;
+
+                    // 绑定点击弹出浮窗逻辑
+                    item.addEventListener('click', () => {
+                        // 准备弹出内容
+                        blogModalTitle.innerHTML = `<span style="font-family: 'Fira Code', monospace;">LOG: ${note.datetime}</span>`;
+                        blogModalBody.innerHTML = `
+                            <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
+                                <h2 style="color: var(--accent-color); margin: 0; font-family: 'Inter', 'Microsoft YaHei', sans-serif;">${note.title}</h2>
+                                <span class="status-badge" style="color: ${note.color};">${note.status}</span>
+                            </div>
+                            <div style="border-left: 3px solid var(--accent-color); padding-left: 15px; margin: 20px 0; background: rgba(88, 166, 255, 0.05); padding: 15px;">
+                                <div style="opacity: 0.9; font-size: 1.1em; line-height: 1.8; font-family: 'Inter', 'Noto Serif SC', 'Microsoft YaHei', sans-serif;">${note.content}</div>
+                            </div>
+                            <p style="color: var(--accent-color); margin-top: 50px; font-family: 'Fira Code', monospace;">[ END OF RECORD ]</p>
+                        `;
+                        
+                        // 显示浮窗
+                        blogOverlay.classList.add('active');
+                        document.body.style.overflow = 'hidden';
+                    });
+
+                    timelineContainer.appendChild(item);
+                });
             }
         });
     </script>
