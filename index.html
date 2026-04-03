@@ -1336,12 +1336,11 @@
     </script>
     <!-- 笔记数据文件加载 (通过 build_notes.ps1 生成) -->
     <script>
-        // 强制每次加载最新的笔记数据，避免浏览器缓存
-        document.write('<script src="assets/notes_data.js?v=' + new Date().getTime() + '"><\/script>');
-    </script>
-    <script>
-        // 动态加载笔记逻辑
-        document.addEventListener('DOMContentLoaded', () => {
+        // 动态防缓存加载笔记数据，并确保数据加载完成后再渲染
+        const script = document.createElement('script');
+        script.src = 'assets/notes_data.js?v=' + new Date().getTime(); // 强制无缓存
+        
+        script.onload = () => {
             const timelineContainer = document.getElementById('journal-timeline');
             const blogOverlay = document.getElementById('blog-modal-overlay');
             const blogModalTitle = document.querySelector('.blog-modal-title');
@@ -1370,7 +1369,6 @@
 
                     // 绑定点击弹出浮窗逻辑
                     item.addEventListener('click', () => {
-                        // 准备弹出内容
                         blogModalTitle.innerHTML = `<span style="font-family: 'Fira Code', monospace;">LOG: ${note.datetime}</span>`;
                         blogModalBody.innerHTML = `
                             <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
@@ -1383,7 +1381,6 @@
                             <p style="color: var(--accent-color); margin-top: 50px; font-family: 'Fira Code', monospace;">[ END OF RECORD ]</p>
                         `;
                         
-                        // 显示浮窗
                         blogOverlay.classList.add('active');
                         document.body.style.overflow = 'hidden';
                     });
@@ -1391,7 +1388,8 @@
                     timelineContainer.appendChild(item);
                 });
             }
-        });
+        };
+        document.body.appendChild(script);
     </script>
 </body>
 
