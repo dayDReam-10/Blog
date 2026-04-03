@@ -1,10 +1,12 @@
-$notesDir = "..\notes"
+$notesDir = Join-Path $PSScriptRoot "..\notes"
 $outputFile = "notes_data.js"
 
 $notes = @()
 if (Test-Path $notesDir) {
+    Write-Host "Searching notes in: $notesDir"
     $files = Get-ChildItem -Path $notesDir -Filter *.txt
     foreach ($file in $files) {
+        Write-Host "Processing: $($file.Name)"
         $content = [System.IO.File]::ReadAllText($file.FullName, [System.Text.Encoding]::UTF8)
         # 兼容可能有不同换行符和编码导致的分割问题
         $parts = $content -split "`r?`n---`r?`n|---`r?`n"
@@ -12,7 +14,7 @@ if (Test-Path $notesDir) {
             $parts = $content -split "---"
         }
         if ($parts.Count -ge 2) {
-            $metaLines = $parts[0] -split "`n"
+            $metaLines = $parts[0] -split "`r?`n|`n"
             
             $noteProps = @{
                 title = "Untitled"
@@ -38,12 +40,21 @@ if (Test-Path $notesDir) {
         }
     }
 }
+else {
+    Write-Warning "Notes directory not found: $notesDir"
+}
 
+Write-Host "Total notes found: $($notes.Count)"
 $notes = $notes | Sort-Object -Property @{Expression={$_.date}; Descending=$true}
 $json = $notes | ConvertTo-Json -Depth 10
 
 $jsContent = "const notesData = $json;"
 
-[System.IO.File]::WriteAllText((Join-Path $PWD $outputFile), $jsContent, [System.Text.Encoding]::UTF8)
+# 直接定义完整路径，确保写入位置准确
+$assetsPath = Join-Path $PSScriptRoot "notes_data.js"
+$rootPath = Join-Path (Split-Path $PSScriptRoot -Parent) "notes_data.js"
 
-Write-Host "Notes updated successfully!" -ForegroundColor Green
+[System.IO.File]::WriteAllText($assetsPath, $jsContent, [System.Text.Encoding]::UTF8)
+[System.IO.File]::WriteAllText($rootPath, $jsContent, [System.Text.Encoding]::UTF8)
+
+Write-Host "Notes updated successfully: $rootPath" -ForegroundColor Green
