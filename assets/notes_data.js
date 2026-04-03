@@ -1,5 +1,14 @@
 ﻿const notesData = [
     {
+        "color":  "#60a5fa",
+        "title":  "新测试笔记",
+        "datetime":  "2024.04.03 / 10:00",
+        "status":  "New",
+        "content":  "这是一条新上传的测试笔记，应该显示在最上方。",
+        "date":  "2024-04-03",
+        "idDate":  "20240403"
+    },
+    {
         "color":  "#4ade80",
         "title":  "全面模块化回归",
         "datetime":  "2024.03.31 / 15:45",
