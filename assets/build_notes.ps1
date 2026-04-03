@@ -6,7 +6,11 @@ if (Test-Path $notesDir) {
     $files = Get-ChildItem -Path $notesDir -Filter *.txt
     foreach ($file in $files) {
         $content = [System.IO.File]::ReadAllText($file.FullName, [System.Text.Encoding]::UTF8)
-        $parts = $content -split "---"
+        # 兼容可能有不同换行符和编码导致的分割问题
+        $parts = $content -split "`r?`n---`r?`n|---`r?`n"
+        if ($parts.Count -lt 2) {
+            $parts = $content -split "---"
+        }
         if ($parts.Count -ge 2) {
             $metaLines = $parts[0] -split "`n"
             
