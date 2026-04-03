@@ -916,7 +916,6 @@
     <nav id="navbar">
         <div class="nav-left" style="display: flex; align-items: center; gap: 20px;">
             <a href="#" class="nav-brand">DAYDREAM</a>
-            <a href="#" class="view-projects-btn" id="open-blog-btn">WRITE </a>
             <a href="Project.html" class="view-projects-btn">PROJECTS_HUB </a>
         </div>
         <div class="theme-switch-wrapper" id="theme-toggle">
@@ -1152,175 +1151,17 @@
                 <button class="blog-modal-close" id="blog-modal-close">×</button>
             </div>
             <div class="blog-modal-body">
-                <h2 style="color: var(--accent-color); margin-bottom: 20px; font-family: 'Fira Code', monospace;">[ INITIALIZE NEW LOG ]</h2>
-                <form id="new-log-form" style="display: flex; flex-direction: column; gap: 20px;">
-                    <div>
-                        <label style="display: block; margin-bottom: 5px; color: var(--accent-color); font-family: 'Fira Code', monospace;">>>> LOG_TITLE</label>
-                        <input type="text" id="log-title" placeholder="Enter title here..." required style="width: 100%; box-sizing: border-box; background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); color: var(--main-text); padding: 12px; font-family: 'Inter', 'Noto Serif SC', 'Microsoft YaHei', sans-serif; font-size: 1rem; outline: none; border-radius: 5px;">
-                    </div>
-                    <div>
-                        <label style="display: block; margin-bottom: 5px; color: var(--accent-color); font-family: 'Fira Code', monospace;">>>> STATUS_BADGE</label>
-                        <select id="log-badge" style="width: 100%; box-sizing: border-box; background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); color: var(--main-text); padding: 12px; font-family: 'Inter', 'Noto Serif SC', 'Microsoft YaHei', sans-serif; font-size: 1rem; outline: none; border-radius: 5px;">
-                            <option value="System Update|#4ade80" style="color: #000; background: #4ade80;">System Update</option>
-                            <option value="Hotfix|#f87171" style="color: #000; background: #f87171;">Hotfix</option>
-                            <option value="Dev Note|#60a5fa" style="color: #000; background: #60a5fa;">Dev Note</option>
-                            <option value="Daily Record|#e879f9" style="color: #000; background: #e879f9;">Daily Record</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label style="display: block; margin-bottom: 5px; color: var(--accent-color); font-family: 'Fira Code', monospace;">>>> LOG_CONTENT</label>
-                        <textarea id="log-content" placeholder="Awaiting input..." required rows="8" style="width: 100%; box-sizing: border-box; background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); color: var(--main-text); padding: 12px; font-family: 'Inter', 'Noto Serif SC', 'Microsoft YaHei', sans-serif; font-size: 1.05rem; line-height: 1.8; outline: none; border-radius: 5px; resize: vertical;"></textarea>
-                    </div>
-                    <button type="submit" style="background: var(--accent-color); color: #000; border: none; padding: 15px; font-family: 'Fira Code', monospace; font-size: 1.1rem; font-weight: bold; cursor: pointer; border-radius: 5px; transition: 0.3s; letter-spacing: 2px;">EXECUTE POST 获取</button>
-                </form>
+                <!-- 这里的表单将被移除，后续仅用于展示笔记详情 -->
             </div>
         </div>
     </div>
 
     <script>
-        // 浮窗交互与写入逻辑
-        const btnBlog = document.getElementById('open-blog-btn');
+        // 浮窗交互逻辑
         const blogOverlay = document.getElementById('blog-modal-overlay');
         const blogClose = document.getElementById('blog-modal-close');
-
         const blogModalTitle = document.querySelector('.blog-modal-title');
         const blogModalBody = document.querySelector('.blog-modal-body');
-        const defaultBlogContent = blogModalBody.innerHTML;
-        const defaultBlogTitle = 'DAYDREAM_BLOG \\\\';
-        
-        // 生成节点HTML
-        function createTimelineItem(log) {
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = `
-            <div class="timeline-item" data-date="${log.rawDate}" id="note-${log.id}">
-                <div class="timeline-dot"></div>
-                <div class="timeline-date">
-                    <span>${log.displayDate}</span>
-                    <span class="status-badge" style="color: ${log.badgeColor};">${log.badgeText}</span>
-                </div>
-                <div class="timeline-card">
-                    <h3>${log.title}</h3>
-                    <p>${log.content}</p>
-                </div>
-            </div>`;
-            const item = tempDiv.firstElementChild;
-            // 绑定点击事件
-            item.style.cursor = 'pointer';
-            item.addEventListener('click', () => {
-                blogModalTitle.innerHTML = `<span style="font-family: 'Fira Code', monospace;">LOG: ${log.displayDate}</span>`;
-                blogModalBody.innerHTML = `
-                    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
-                        <h2 style="color: var(--accent-color); margin: 0; font-family: 'Inter', 'Microsoft YaHei', sans-serif;">${log.title}</h2>
-                        <span class="status-badge" style="color: ${log.badgeColor};">${log.badgeText}</span>
-                    </div>
-                    <div style="border-left: 3px solid var(--accent-color); padding-left: 15px; margin: 20px 0; background: rgba(88, 166, 255, 0.05); padding: 15px;">
-                        <p style="opacity: 0.9; font-size: 1.1em; line-height: 1.8; font-family: 'Inter', 'Noto Serif SC', 'Microsoft YaHei', sans-serif;">${log.content.replace(/\n/g, '<br>')}</p>
-                    </div>
-                    <p style="color: var(--accent-color); margin-top: 50px; font-family: 'Fira Code', monospace;">[ END OF RECORD ]</p>
-                `;
-                blogOverlay.classList.add('active');
-                document.body.style.overflow = 'hidden';
-            });
-            return item;
-        }
-
-        // 加载已保存记录并排序渲染
-        function loadSavedLogs() {
-            const saved = JSON.cast ? [] : JSON.parse(localStorage.getItem('daydream_logs') || '[]');
-            const container = document.getElementById('journal-timeline');
-            // 将默认硬编码的文章与新文章合并显示
-            saved.forEach(log => {
-                const item = createTimelineItem(log);
-                container.prepend(item); // 插入到最前面
-            });
-        }
-        loadSavedLogs();
-
-        // 默认发文按钮点击逻辑
-        btnBlog.addEventListener('click', (e) => {
-            e.preventDefault();
-            // 重置为发文表单
-            blogModalTitle.textContent = defaultBlogTitle;
-            blogModalBody.innerHTML = defaultBlogContent;
-            
-            // 绑定发文事件
-            setTimeout(() => {
-                const form = document.getElementById('new-log-form');
-                if(form) {
-                    form.addEventListener('submit', (ev) => {
-                        ev.preventDefault();
-                        const title = document.getElementById('log-title').value;
-                        const badgeSelect = document.getElementById('log-badge').value.split('|');
-                        const badgeText = badgeSelect[0];
-                        const badgeColor = badgeSelect[1];
-                        const content = document.getElementById('log-content').value;
-                        
-                        const now = new Date();
-                        const y = now.getFullYear();
-                        const m = String(now.getMonth() + 1).padStart(2, '0');
-                        const d = String(now.getDate()).padStart(2, '0');
-                        const h = String(now.getHours()).padStart(2, '0');
-                        const min = String(now.getMinutes()).padStart(2, '0');
-                        
-                        const newLog = {
-                            id: Date.now(),
-                            rawDate: `${y}-${m}-${d}`,
-                            displayDate: `${y}.${m}.${d} / ${h}:${min}`,
-                            badgeText: badgeText,
-                            badgeColor: badgeColor,
-                            title: title,
-                            content: content
-                        };
-
-                        // 保存到LocalStorage
-                        const saved = JSON.parse(localStorage.getItem('daydream_logs') || '[]');
-                        saved.unshift(newLog); // 最新在前
-                        localStorage.setItem('daydream_logs', JSON.stringify(saved));
-                        
-                        // 插入页面
-                        const container = document.getElementById('journal-timeline');
-                        const item = createTimelineItem(newLog);
-                        container.prepend(item);
-                        
-                        // 关闭弹窗
-                        blogOverlay.classList.remove('active');
-                        document.body.style.overflow = '';
-                        alert('>>> [LOG UPLOADED SUCCESSFULLY]');
-                    });
-                }
-            }, 50);
-
-            blogOverlay.classList.add('active');
-            document.body.style.overflow = 'hidden'; 
-        });
-
-        // 获取硬编码的笔记点击列表并绑定
-        const staticTimelineItems = document.querySelectorAll('.timeline-item:not([id^="note-17"])'); 
-        staticTimelineItems.forEach(item => {
-            item.style.cursor = 'pointer'; 
-            item.addEventListener('click', () => {
-                const dateText = item.querySelector('.timeline-date span:first-child')?.textContent || '';
-                const badgeHtml = item.querySelector('.status-badge')?.outerHTML || '';
-                const titleText = item.querySelector('.timeline-card h3')?.textContent || 'Untitled Log';
-                const bodyHtml = item.querySelector('.timeline-card p')?.innerHTML || '';
-
-                // 修改浮窗标题和内容为点开的笔记
-                blogModalTitle.innerHTML = `<span style="font-family: 'Fira Code', monospace;">LOG: ${dateText}</span>`;
-                blogModalBody.innerHTML = `
-                    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
-                        <h2 style="color: var(--accent-color); margin: 0; font-family: 'Inter', 'Microsoft YaHei', sans-serif;">${titleText}</h2>
-                        ${badgeHtml}
-                    </div>
-                    <div style="border-left: 3px solid var(--accent-color); padding-left: 15px; margin: 20px 0; background: rgba(88, 166, 255, 0.05); padding: 15px;">
-                        <p style="opacity: 0.9; font-size: 1.1em; line-height: 1.8; font-family: 'Inter', 'Noto Serif SC', 'Microsoft YaHei', sans-serif;">${bodyHtml}</p>
-                    </div>
-                    <p style="color: var(--accent-color); margin-top: 50px; font-family: 'Fira Code', monospace;">[ END OF RECORD ]</p>
-                `;
-
-                blogOverlay.classList.add('active');
-                document.body.style.overflow = 'hidden';
-            });
-        });
 
         blogClose.addEventListener('click', () => {
             blogOverlay.classList.remove('active');
