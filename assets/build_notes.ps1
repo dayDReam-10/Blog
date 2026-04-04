@@ -9,19 +9,33 @@ if (Test-Path $notesDir) {
         Write-Host "Processing: $($file.Name)"
         $content = [System.IO.File]::ReadAllText($file.FullName, [System.Text.Encoding]::UTF8)
         # 兼容可能有不同换行符和编码导致的分割问题
-        $parts = $content -split "`r?`n---`r?`n|---`r?`n"
-        if ($parts.Count -lt 2) {
-            $parts = $content -split "---"
-        }
-        if ($parts.Count -ge 2) {
-            $metaLines = $parts[0] -split "`r?`n|`n"
+        # 先寻找第一个 --- 作为元数据和内容的分隔符
+        $firstDashIndex = $content.IndexOf("`r`n---`r`n")
+        if ($firstDashIndex -lt 0) { $firstDashIndex = $content.IndexOf("`n---`n") }
+        if ($firstDashIndex -lt 0) { $firstDashIndex = $content.IndexOf("---") }
+
+        if ($firstDashIndex -ge 0) {
+            $metaPart = $content.Substring(0, $firstDashIndex)
+            
+            # --- 分隔符之后的全文作为内容
+            # 先找到分隔符这行结束的位置
+            $remaining = $content.Substring($firstDashIndex)
+            $firstNewLineInRemaining = $remaining.IndexOf("`n")
+            if ($firstNewLineInRemaining -ge 0) {
+                $contentPart = $remaining.Substring($firstNewLineInRemaining + 1).Trim()
+            } else {
+                # 如果 --- 后面没有换行了
+                $contentPart = ""
+            }
+            
+            $metaLines = $metaPart -split "`r?`n|`n"
             
             $noteProps = @{
                 title = "Untitled"
                 datetime = "2024.01.01 / 00:00"
                 status = "Note"
                 color = "#58a6ff"
-                content = ($parts[1].Trim() -replace "`r?`n", "<br>")
+                content = ($contentPart -replace "`r?`n|`n", "<br>")
             }
             $note = New-Object -TypeName PSObject -Property $noteProps
             
