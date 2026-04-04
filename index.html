@@ -533,6 +533,25 @@
             cursor: pointer;
         }
 
+        .timeline-card h3 {
+            margin-bottom: 12px;
+            font-size: 1.4rem;
+            color: var(--accent-color);
+        }
+
+        .timeline-card p {
+            font-size: 0.95rem;
+            color: var(--main-text);
+            line-height: 1.6;
+            opacity: 0.85;
+            /* 限制首页显示的行数 */
+            display: -webkit-box;
+            -webkit-line-clamp: 3; /* 默认显示3行，可根据需要调整 */
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
         .timeline-date {
             font-family: 'Fira Code', monospace;
             color: var(--meta-text);
