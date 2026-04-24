@@ -1,9 +1,9 @@
-Title:Luck_guy 动态调试分析
+Title:lastet_notes
 DateTime: 2026.04.24 / 20:00
 Status: System Update
 Color: #4ade80
 ---
-# Luck_guy 动态调试分析
+# lastet_notes
 
 最近把自己在逆向和动态调试里踩过的一些坑整理了一下，也顺手对照了我第一次写的《初次动态调试（手动脱壳）》，把 Docker、去花、SEH 安全机制、VM 逆向题、动态调试、AES 这些东西串在一起记了个复盘。写得比较随手，主要还是给自己留个能回看的版本。
 
