@@ -916,6 +916,61 @@
             background-color: var(--accent-color);
             border-radius: 4px;
         }
+
+        .note-markdown-content {
+            font-family: 'Inter', 'Noto Serif SC', 'Microsoft YaHei', sans-serif;
+            font-size: 1.05em;
+            line-height: 1.9;
+        }
+
+        .note-markdown-content h1,
+        .note-markdown-content h2,
+        .note-markdown-content h3,
+        .note-markdown-content h4,
+        .note-markdown-content h5,
+        .note-markdown-content h6 {
+            margin: 1rem 0 0.6rem;
+            color: var(--main-text);
+            line-height: 1.4;
+        }
+
+        .note-markdown-content p,
+        .note-markdown-content ul,
+        .note-markdown-content ol,
+        .note-markdown-content blockquote,
+        .note-markdown-content pre {
+            margin: 0.8rem 0;
+        }
+
+        .note-markdown-content ul,
+        .note-markdown-content ol {
+            padding-left: 1.4rem;
+        }
+
+        .note-markdown-content code {
+            font-family: 'Fira Code', monospace;
+            background: rgba(88, 166, 255, 0.12);
+            padding: 0.12rem 0.3rem;
+            border-radius: 4px;
+        }
+
+        .note-markdown-content pre {
+            background: rgba(0, 0, 0, 0.22);
+            padding: 0.9rem;
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+
+        .note-markdown-content pre code {
+            background: transparent;
+            padding: 0;
+        }
+
+        .note-markdown-content a {
+            color: var(--accent-color);
+            text-decoration: underline;
+            text-underline-offset: 3px;
+        }
     </style>
 </head>
 
@@ -1196,60 +1251,98 @@
     </script>
     <!-- 笔记数据文件加载 (通过 build_notes.ps1 生成) -->
     <script>
-        // 动态防缓存加载笔记数据，并确保数据加载完成后再渲染
-        const script = document.createElement('script');
-        script.src = 'assets/notes_data.js?v=' + new Date().getTime(); // 强制无缓存
-        
-        script.onload = () => {
-            const timelineContainer = document.getElementById('journal-timeline');
-            const blogOverlay = document.getElementById('blog-modal-overlay');
-            const blogModalTitle = document.querySelector('.blog-modal-title');
-            const blogModalBody = document.querySelector('.blog-modal-body');
+        (async () => {
+            let marked;
+            try {
+                ({ marked } = await import('https://cdn.jsdelivr.net/npm/marked/lib/marked.esm.js'));
+            } catch (error) {
+                console.error('Marked import failed:', error);
+                return;
+            }
 
-            if (timelineContainer && typeof notesData !== 'undefined') {
-                timelineContainer.innerHTML = ''; // 清理挂载点
-                notesData.forEach(note => {
-                    const item = document.createElement('div');
-                    item.className = 'timeline-item';
-                    item.setAttribute('data-date', note.date);
-                    item.id = 'note-' + note.idDate;
-                    item.style.cursor = 'pointer'; // 变成手型，提示可点击
-                    
-                    item.innerHTML = `
-                        <div class="timeline-dot"></div>
-                        <div class="timeline-date">
-                            <span>${note.datetime}</span>
-                            <span class="status-badge" style="color: ${note.color};">${note.status}</span>
-                        </div>
-                        <div class="timeline-card">
-                            <h3>${note.title}</h3>
-                            <p>${note.content}</p>
-                        </div>
-                    `;
+            marked.setOptions({
+                gfm: true,
+                breaks: true
+            });
 
-                    // 绑定点击弹出浮窗逻辑
-                    item.addEventListener('click', () => {
-                        blogModalTitle.innerHTML = `<span style="font-family: 'Fira Code', monospace;">LOG: ${note.datetime}</span>`;
-                        blogModalBody.innerHTML = `
-                            <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
-                                <h2 style="color: var(--accent-color); margin: 0; font-family: 'Inter', 'Microsoft YaHei', sans-serif;">${note.title}</h2>
+            const normalizeMarkdown = (rawContent = '') => {
+                return String(rawContent)
+                    .replace(/\r\n/g, '\n')
+                    .replace(/<br\s*\/?>/gi, '\n')
+                    .replace(/^\s*---\s*\n?/, '')
+                    .trim();
+            };
+
+            const renderMarkdown = (rawContent = '') => {
+                return marked.parse(normalizeMarkdown(rawContent));
+            };
+
+            const createPreview = (rawContent = '', maxLength = 120) => {
+                const plainText = normalizeMarkdown(rawContent)
+                    .replace(/<[^>]*>/g, '')
+                    .replace(/\s+/g, ' ')
+                    .trim();
+
+                if (plainText.length <= maxLength) return plainText;
+                return `${plainText.slice(0, maxLength)}...`;
+            };
+
+            // 动态防缓存加载笔记数据，并确保数据加载完成后再渲染
+            const script = document.createElement('script');
+            script.src = 'assets/notes_data.js?v=' + new Date().getTime();
+
+            script.onload = () => {
+                const timelineContainer = document.getElementById('journal-timeline');
+                const blogOverlay = document.getElementById('blog-modal-overlay');
+                const blogModalTitle = document.querySelector('.blog-modal-title');
+                const blogModalBody = document.querySelector('.blog-modal-body');
+
+                if (timelineContainer && typeof notesData !== 'undefined') {
+                    timelineContainer.innerHTML = '';
+                    notesData.forEach(note => {
+                        const item = document.createElement('div');
+                        item.className = 'timeline-item';
+                        item.setAttribute('data-date', note.date);
+                        item.id = 'note-' + note.idDate;
+                        item.style.cursor = 'pointer';
+
+                        item.innerHTML = `
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-date">
+                                <span>${note.datetime}</span>
                                 <span class="status-badge" style="color: ${note.color};">${note.status}</span>
                             </div>
-                            <div style="border-left: 3px solid var(--accent-color); padding-left: 15px; margin: 20px 0; background: rgba(88, 166, 255, 0.05); padding: 15px;">
-                                <div style="opacity: 0.9; font-size: 1.1em; line-height: 1.8; font-family: 'Inter', 'Noto Serif SC', 'Microsoft YaHei', sans-serif;">${note.content}</div>
+                            <div class="timeline-card">
+                                <h3>${note.title}</h3>
+                                <p>${createPreview(note.content)}</p>
                             </div>
-                            <p style="color: var(--accent-color); margin-top: 50px; font-family: 'Fira Code', monospace;">[ END OF RECORD ]</p>
                         `;
-                        
-                        blogOverlay.classList.add('active');
-                        document.body.style.overflow = 'hidden';
-                    });
 
-                    timelineContainer.appendChild(item);
-                });
-            }
-        };
-        document.body.appendChild(script);
+                        // 绑定点击弹出浮窗逻辑
+                        item.addEventListener('click', () => {
+                            blogModalTitle.innerHTML = `<span style="font-family: 'Fira Code', monospace;">LOG: ${note.datetime}</span>`;
+                            blogModalBody.innerHTML = `
+                                <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
+                                    <h2 style="color: var(--accent-color); margin: 0; font-family: 'Inter', 'Microsoft YaHei', sans-serif;">${note.title}</h2>
+                                    <span class="status-badge" style="color: ${note.color};">${note.status}</span>
+                                </div>
+                                <div style="border-left: 3px solid var(--accent-color); margin: 20px 0; background: rgba(88, 166, 255, 0.05); padding: 15px;">
+                                    <div class="note-markdown-content">${renderMarkdown(note.content)}</div>
+                                </div>
+                                <p style="color: var(--accent-color); margin-top: 50px; font-family: 'Fira Code', monospace;">[ END OF RECORD ]</p>
+                            `;
+
+                            blogOverlay.classList.add('active');
+                            document.body.style.overflow = 'hidden';
+                        });
+
+                        timelineContainer.appendChild(item);
+                    });
+                }
+            };
+
+            document.body.appendChild(script);
+        })();
     </script>
 </body>
 
