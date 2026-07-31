@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DayDReam | Article</title>
+    <link rel="icon" href="./assets/cy.png" type="image/x-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&family=Fira+Code:wght@400;500;700&family=Noto+Serif+SC:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --bg:#0d1117; --text:#e6edf3; --muted:#8b949e; --accent:#58a6ff; --glass:rgba(22,27,34,.78); --border:rgba(255,255,255,.1); --overlay:rgba(13,17,23,.62); --particle:rgba(88,166,255,.1); }
+        [data-theme="light"] { --bg:#f6f8fa; --text:#1f2328; --muted:#636c76; --accent:#0969da; --glass:rgba(255,255,255,.86); --border:rgba(31,35,40,.12); --overlay:rgba(255,255,255,.36); --particle:rgba(0,0,0,.05); }
+        * { box-sizing:border-box; }
+        html { scroll-behavior:smooth; }
+        body { margin:0; min-height:100vh; overflow-x:hidden; background:var(--bg); color:var(--text); font:16px/1.8 Inter,'Noto Serif SC',sans-serif; -webkit-font-smoothing:antialiased; }
+        #bg-canvas { position:fixed; inset:0; width:100%; height:100%; z-index:-2; opacity:.8; }
+        .site-banner { position:relative; min-height:32vh; display:grid; place-items:center; overflow:hidden; background:linear-gradient(var(--overlay),var(--bg)),url('./assets/dbp.jpg') center/cover no-repeat; border-bottom:1px solid var(--border); }
+        .banner-content { position:relative; z-index:1; text-align:center; padding:6rem 1.25rem 3rem; }
+        .banner-content h1 { margin:0; font-size:clamp(2.4rem,7vw,5.2rem); letter-spacing:clamp(4px,1vw,14px); text-transform:uppercase; font-weight:900; text-shadow:0 0 28px rgba(88,166,255,.22); }
+        .banner-content p { margin:.8rem 0 0; color:var(--muted); font:700 .72rem/1.4 'Fira Code',monospace; letter-spacing:3px; }
+        nav { position:absolute; z-index:5; top:0; left:0; right:0; display:flex; align-items:center; justify-content:space-between; padding:1.1rem max(1.25rem,5vw); background:rgba(13,17,23,.42); backdrop-filter:blur(14px); border-bottom:1px solid var(--border); }
+        [data-theme="light"] nav { background:rgba(255,255,255,.62); }
+        .nav-brand, .back-link { color:var(--text); text-decoration:none; font:700 .78rem/1 'Fira Code',monospace; letter-spacing:2px; }
+        .back-link { color:var(--accent); }
+        .theme-toggle { border:1px solid var(--border); background:rgba(128,128,128,.08); color:var(--text); border-radius:999px; cursor:pointer; padding:.4rem .7rem; font:500 .75rem 'Fira Code',monospace; }
+        main { width:min(940px,calc(100% - 2rem)); margin:2.5rem auto 5rem; }
+        .article-shell { background:var(--glass); border:1px solid var(--border); box-shadow:0 20px 50px rgba(0,0,0,.28); padding:clamp(1.3rem,4vw,3.5rem); }
+        .article-meta { display:flex; flex-wrap:wrap; align-items:center; gap:.8rem 1.2rem; padding-bottom:1.2rem; border-bottom:1px solid var(--border); color:var(--muted); font:500 .75rem 'Fira Code',monospace; letter-spacing:1px; }
+        .status { color:var(--accent); }
+        h2 { margin:1.5rem 0 .3rem; color:var(--accent); font-size:clamp(1.8rem,4vw,3rem); line-height:1.25; }
+        .article-content { margin-top:2rem; font-family:Inter,'Noto Serif SC',sans-serif; font-size:1.04rem; }
+        .article-content h1,.article-content h2,.article-content h3,.article-content h4 { color:var(--text); margin:2.2rem 0 .8rem; line-height:1.35; }
+        .article-content p,.article-content ul,.article-content ol,.article-content blockquote,.article-content pre { margin:1rem 0; }
+        .article-content ul,.article-content ol { padding-left:1.5rem; }
+        .article-content blockquote { border-left:3px solid var(--accent); background:rgba(88,166,255,.07); padding:.7rem 1rem; color:var(--muted); }
+        .article-content code { color:var(--accent); background:rgba(88,166,255,.12); padding:.12rem .35rem; border-radius:4px; font:500 .9em 'Fira Code',monospace; }
+        .article-content pre { overflow:auto; padding:1rem; background:rgba(0,0,0,.28); border:1px solid var(--border); border-radius:6px; }
+        .article-content pre code { color:var(--text); background:none; padding:0; }
+        .article-content a { color:var(--accent); text-underline-offset:3px; }
+        .end-marker { margin-top:3rem; color:var(--accent); font:500 .8rem 'Fira Code',monospace; letter-spacing:2px; }
+        .error { color:#ff7b72; font-family:'Fira Code',monospace; }
+        @media (max-width:600px) { nav { padding:1rem; } .nav-brand { display:none; } main { width:min(100% - 1rem,940px); margin-top:1rem; } .article-shell { padding:1rem; } .article-content { font-size:1rem; } }
+    </style>
+</head>
+
+<body data-theme="dark">
+    <canvas id="bg-canvas" aria-hidden="true"></canvas>
+    <nav>
+        <a class="nav-brand" href="index.html">DAYDREAM_BLOG</a>
+        <a class="back-link" href="index.html">&lt; BACK_TO_LOG</a>
+        <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Toggle theme">THEME</button>
+    </nav>
+    <header class="site-banner">
+        <div class="banner-content"><h1>DayDReam</h1><p>PERSONAL SYSTEM JOURNAL / LONG READ</p></div>
+    </header>
+    <main>
+        <article class="article-shell" id="article-shell">
+            <div class="article-meta"><span id="article-date">LOADING_RECORD...</span><span class="status" id="article-status"></span></div>
+            <h2 id="article-title">Loading...</h2>
+            <div class="article-content" id="article-content"></div>
+            <div class="end-marker">[ END OF RECORD ]</div>
+        </article>
+    </main>
+    <script src="notes_data.js"></script>
+    <script type="module">
+        import { marked } from 'https://cdn.jsdelivr.net/npm/marked/lib/marked.esm.js';
+        marked.setOptions({ gfm:true, breaks:true });
+        const params = new URLSearchParams(window.location.search);
+        const id = params.get('id');
+        const records = typeof notesData !== 'undefined' ? notesData : [];
+        const note = Array.isArray(records) ? records.find((item) => item.idDate === id) : null;
+        const normalize = (content = '') => String(content).replace(/\r\n/g,'\n').replace(/<br\s*\/?>(\s*)/gi,'\n').replace(/^\s*---\s*\n?/,'').trim();
+        if (!note) {
+            document.getElementById('article-title').textContent = 'RECORD_NOT_FOUND';
+            document.getElementById('article-content').innerHTML = '<p class="error">The requested article does not exist in notes_data.js.</p>';
+        } else {
+            document.title = `${note.title} | DayDReam`;
+            document.getElementById('article-date').textContent = `LOG: ${note.datetime}`;
+            document.getElementById('article-status').textContent = note.status;
+            document.getElementById('article-title').textContent = note.title;
+            document.getElementById('article-content').innerHTML = marked.parse(normalize(note.content));
+        }
+        const body = document.body;
+        const toggle = document.getElementById('theme-toggle');
+        toggle.addEventListener('click', () => body.dataset.theme = body.dataset.theme === 'dark' ? 'light' : 'dark');
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        let points = [];
+        function resize() { canvas.width = innerWidth; canvas.height = innerHeight; points = Array.from({ length:40 }, () => ({ x:Math.random()*canvas.width, y:Math.random()*canvas.height, vx:(Math.random()-.5)*.5, vy:(Math.random()-.5)*.5 })); }
+        function draw() { ctx.clearRect(0,0,canvas.width,canvas.height); ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--particle').trim(); points.forEach((p,i) => { p.x += p.vx; p.y += p.vy; if (p.x<0 || p.x>canvas.width) p.vx *= -1; if (p.y<0 || p.y>canvas.height) p.vy *= -1; points.slice(i+1).forEach((q) => { if (Math.hypot(p.x-q.x,p.y-q.y)<180) { ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(q.x,q.y); ctx.stroke(); } }); }); requestAnimationFrame(draw); }
+        resize(); draw(); addEventListener('resize', resize);
+    </script>
+</body>
+</html>
