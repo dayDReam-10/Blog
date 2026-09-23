@@ -29,13 +29,15 @@ if (Test-Path -LiteralPath $notesDir) {
             if ($line -match '^DateTime:\s*(.+)$') { $note.datetime = $matches[1].Trim() }
             if ($line -match '^Status:\s*(.+)$') { $note.status = $matches[1].Trim() }
             if ($line -match '^Color:\s*(.+)$') { $note.color = $matches[1].Trim() }
+            if ($line -match '^Id:\s*(.+)$') { $note | Add-Member -MemberType NoteProperty -Name noteId -Value $matches[1].Trim() -Force }
         }
 
         $dateText = ($note.datetime -split "/")[0].Trim()
         $dateOnly = $dateText.Replace(".", "-")
         try { $dateOnly = ([datetime]::Parse($dateText)).ToString("yyyy-MM-dd") } catch { }
         $note | Add-Member -MemberType NoteProperty -Name date -Value $dateOnly
-        $note | Add-Member -MemberType NoteProperty -Name idDate -Value $dateOnly.Replace("-", "")
+        $idDate = if ($note.noteId) { $note.noteId } else { $dateOnly.Replace("-", "") }
+        $note | Add-Member -MemberType NoteProperty -Name idDate -Value $idDate
         $notes += $note
     }
 }

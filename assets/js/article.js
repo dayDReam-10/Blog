@@ -15,6 +15,12 @@ if (!note) {
     document.getElementById('article-status').textContent = note.status;
     document.getElementById('article-title').textContent = note.title;
     document.getElementById('article-content').innerHTML = marked.parse(normalize(note.content));
+    document.querySelectorAll('#article-content img').forEach((image) => {
+        image.loading = 'lazy';
+        image.decoding = 'async';
+        image.referrerPolicy = 'no-referrer';
+        image.addEventListener('error', () => image.dataset.imageError = 'true', { once: true });
+    });
     const firstHeading = document.querySelector('#article-content h1, #article-content h2');
     if (firstHeading && firstHeading.textContent.trim() === note.title.trim()) firstHeading.remove();
 }
