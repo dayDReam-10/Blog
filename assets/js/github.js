@@ -79,7 +79,8 @@
     async function syncRepositories() {
         const repositories = [
             { name: 'RE-PWN-Writeups', element: 're-pwn-update' },
-            { name: 'McPlugins', element: 'works-update' }
+            { name: 'McPlugins', element: 'works-update' },
+            { name: 'StudioWork', element: 'studiowork-update' }
         ];
         await Promise.allSettled(repositories.map(async ({ name, element }) => {
             const target = document.getElementById(element);
