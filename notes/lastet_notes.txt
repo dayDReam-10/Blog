@@ -1,4 +1,4 @@
-Title:lastet_notes
+Title:近况
 DateTime: 2026.04.24 / 20:00
 Status: System Update
 Color: #4ade80
