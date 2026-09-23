@@ -1,4 +1,4 @@
-Title:BU1LD1NG_My_BL0G
+Title:BLOG搭建记录
 DateTime: 2026.4.6
 Status: System Update
 Color: #4ade80
