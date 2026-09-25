@@ -7,7 +7,7 @@
     const distanceSquared = Number(options.particleDistance || 180) ** 2;
     const colorProperty = options.particleColor || '--particle-color';
     const canvas = document.getElementById('bg-canvas');
-    const context = canvas?.getContext('2d');
+    const context = canvas?.getContext('2d', { alpha: true, desynchronized: true });
     const background = document.getElementById('bg-image');
     const navbar = document.getElementById('navbar');
     const toggle = document.getElementById('theme-toggle');
@@ -23,6 +23,12 @@
     let pointerPending = false;
     let pointerX = 0;
     let pointerY = 0;
+    let lastFrameTime = 0;
+    const frameInterval = 1000 / 30;
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const particleCount = reducedMotion
+        ? 0
+        : Math.min(40, Math.max(20, Math.round((width * height) / 45000)));
 
     function updateTheme() {
         const isDark = document.body.dataset.theme === 'dark';
@@ -54,7 +60,7 @@
         if (points.length && canvas.width === width && canvas.height === height) return;
         canvas.width = width;
         canvas.height = height;
-        points = Array.from({ length: 40 }, () => ({
+        points = Array.from({ length: particleCount }, () => ({
             x: Math.random() * width,
             y: Math.random() * height,
             vx: (Math.random() - 0.5) * speed,
@@ -90,9 +96,14 @@
         if (frameId === null && !document.hidden) frameId = requestAnimationFrame(renderFrame);
     }
 
-    function renderFrame() {
+    function renderFrame(timestamp) {
         frameId = null;
         if (document.hidden) return;
+        if (!reducedMotion && timestamp - lastFrameTime < frameInterval) {
+            scheduleFrame();
+            return;
+        }
+        lastFrameTime = timestamp;
         if (resizePending) {
             resizePending = false;
             resize();
@@ -107,7 +118,7 @@
             const y = (pointerY / height - 0.5) * 60;
             background.style.transform = `scale(1.3) translate(${x}px, ${y}px)`;
         }
-        if (context) {
+        if (context && !reducedMotion) {
             drawParticles();
             scheduleFrame();
         }

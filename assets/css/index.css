@@ -519,6 +519,8 @@ nav.scrolled {
     margin-bottom: 50px;
     transition: 0.5s;
     scroll-margin-top: 100px;
+    content-visibility: auto;
+    contain-intrinsic-size: 0 180px;
 }
 
 .timeline-item.highlight .timeline-card {
@@ -562,6 +564,7 @@ nav.scrolled {
     box-shadow: var(--card-shadow);
     transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); /* 丝滑跟手过渡 */
     cursor: pointer;
+    contain: layout paint;
 }
 
 .timeline-card h3 {
