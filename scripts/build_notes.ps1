@@ -21,6 +21,7 @@ if (Test-Path -LiteralPath $notesDir) {
             datetime = "2024.01.01 / 00:00"
             status = "Note"
             color = "#58a6ff"
+            order = 999
             content = ($contentPart -replace '\r?\n', "<br>")
         }
 
@@ -29,6 +30,7 @@ if (Test-Path -LiteralPath $notesDir) {
             if ($line -match '^DateTime:\s*(.+)$') { $note.datetime = $matches[1].Trim() }
             if ($line -match '^Status:\s*(.+)$') { $note.status = $matches[1].Trim() }
             if ($line -match '^Color:\s*(.+)$') { $note.color = $matches[1].Trim() }
+            if ($line -match '^Order:\s*(\d+)$') { $note.order = [int]$matches[1] }
             if ($line -match '^Id:\s*(.+)$') { $note | Add-Member -MemberType NoteProperty -Name noteId -Value $matches[1].Trim() -Force }
         }
 
@@ -43,7 +45,7 @@ if (Test-Path -LiteralPath $notesDir) {
 }
 
 Write-Host "Total notes found: $($notes.Count)"
-$notes = $notes | Sort-Object -Property @{ Expression = { $_.date }; Descending = $true }
+$notes = $notes | Sort-Object -Property @{ Expression = { $_.order }; Descending = $false }, @{ Expression = { $_.date }; Descending = $true }
 $json = if ($notes.Count) { $notes | ConvertTo-Json -Depth 10 } else { "[]" }
 $assetsPath = Join-Path $dataDir "notes_data.js"
 if (-not (Test-Path -LiteralPath $dataDir)) {

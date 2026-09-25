@@ -72,7 +72,6 @@
             item.innerHTML = `
                 <div class="timeline-dot"></div>
                 <div class="timeline-date">
-                    <span>${note.datetime}</span>
                     <span class="status-badge" style="color: ${note.color};">${note.status}</span>
                 </div>
                 <div class="timeline-card">

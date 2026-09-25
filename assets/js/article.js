@@ -11,7 +11,7 @@ if (!note) {
     document.getElementById('article-content').innerHTML = '<p class="error">The requested article does not exist in notes_data.js.</p>';
 } else {
     document.title = `${note.title} | DayDReam`;
-    document.getElementById('article-date').textContent = `LOG: ${note.datetime}`;
+    document.getElementById('article-date').textContent = '';
     document.getElementById('article-status').textContent = note.status;
     document.getElementById('article-title').textContent = note.title;
     document.getElementById('article-content').innerHTML = marked.parse(normalize(note.content));
