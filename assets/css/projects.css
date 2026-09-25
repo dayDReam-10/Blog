@@ -584,7 +584,6 @@ nav.scrolled {
     box-shadow: var(--card-shadow);
     cursor: pointer;
     position: relative;
-    contain: layout paint;
 }
 
 .post-card:hover {
