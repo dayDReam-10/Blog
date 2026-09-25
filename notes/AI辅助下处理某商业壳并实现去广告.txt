@@ -1,0 +1,107 @@
+Title:AI辅助下处理某商业壳并实现去广告
+DateTime: 2026.09.25 / 20:00
+Id: 20260925-copymanga
+Status: Android Reverse Engineering
+Color: #f59e0b
+---
+# AI辅助下处理某商业壳并实现去广告
+
+前记：和学长学习逆向已有约半年，但是打ctf近来越来越没有正反馈，于是想做一些实战性的东西，正好最近喜欢看些漫画，而且这个app一直弹广告，打算学习去除
+
+## 信息处理与识别
+
+用jadx看一下
+
+![jadx识别结果](assets/images/copymanga/jadx.png)
+
+`lib`下还看到`libapp.so`那么这就是`360+flutter`的套壳应用了
+
+但是`lib`下没看到常规特征`libjiagu.so`，反而在`assets\`下看到了
+
+幸运的是`360`是函数抽取壳，是抽取方法体并在运行时回填的类型，但是`flutter`应用的主要逻辑是处于`libapp.so`里面的，核心根本没有被抽，主要任务其实也就是过签和完整性校验，处理好正确的入口点和补全dex即可
+
+我们需要处理Java层的dex，一般来说让应用跑起来利用frida-dexdump去dump 但是扫出来 29 个 dex 全是系统框架类，业务类一个没有
+
+先不着急，先去看看壳的启动和加载点，既然xml里面是找的`StubApp`，我们在这里也查查`com\stub\StubApp.java`
+
+发现几个关键函数`attachBaseContext(Context)` `onCreate`，但是这个`onCreate`
+
+![StubApp入口](assets/images/copymanga/stubapp.png)
+
+里面显然含有字符串混淆，那这要先处理掉混淆，追到`com/tianyu/util/a.java`
+
+```java
+ public static String a(String str) {
+     if (TextUtils.isEmpty(str)) return "";
+     char[] charArray = str.toCharArray();
+     for (int i6 = 0; i6 < charArray.length; i6++) {
+         charArray[i6] = (char) (charArray[i6] ^ 16); 
+     }
+     return String.valueOf(charArray);
+ }
+```
+
+有壳的基础的话知道这里`attachBaseContext(Context)` `onCreate`必然是解密了真dex并换出真`Application`的，由于代码量太大了我们利用AI处理一下
+
+得知`attachBaseContext` 里其实只做了三件事：把 `assets/` 下的 `libjiagu_a64.so` 拷进应用私有目录 `.jiagu/`、`System.load` 把它加载进进程、再调 `native` 的 `interface5` 把真实的 dex 解密出来；紧接着 `onCreate` 里用 `ChangeTopApplication` 把 `Application` 换成了反射构造出来的 `MainApplication`
+
+那么对于我们脱壳的目的来说，我们要做的就是拿出解密后的dex，再塞回去，找出`MainApplication`入口，避免壳的相关解密逻辑和检查
+
+我们先取得dex吧，一般来说我们应该是乱点一下触发回填，写hook函数抽出来还原，所以我让AI写个脚本直接试图Hook取得并修复DexFile，但是AI尝试过后说只有关键部分被抽取，大多数都算不落地的简单内存壳，由于我的测试机已经Root了，直接`cat /proc/pid/maps`都行，我一开始是全扫的，扫了我15分钟一轮，后面让ai优化了一下，从匿名段里抽取即可
+
+![内存中的DEX片段](assets/images/copymanga/dex-memory.png)
+
+![导出的DEX](assets/images/copymanga/dex-dump.png)
+
+那这样肯定是不可能直接全部`patch`处理掉的，只能说看看能不能处理掉调用点
+
+dump之后有些处于Native层的和被抽取的，dump 出来的 dex 里，native 方法分两类，真 JNI 的名字是 nativeXxx / _foo 这种（实现在 so 里，不用管）；被壳抽空的保留着原 Java 名字——onCreate、onResume 这种，写脚本补充父类调用写回
+
+壳类 StubApp 自己也声明了 native 方法（实现在 libjiagu 里）。壳摘了之后 so 不再加载，但包里还有多处地方调用它，所以得给它补等价实现
+
+然后改写`android:name="com.stub.StubApp"   →   "com.copymanga.app.MainApplication"`
+
+至此脱壳结束，接下来处理广告
+
+第一版想法很简单：把这些广告入口全 patch 掉，改完装上去——应用直接卡住白屏
+
+判断是卡在等回调上，因为 Flutter 和 Java 之间的通信只有一条路：MethodChannel。Dart 侧 invokeMethod 发请求过去，Java 侧 onMethodCall 收到后必须回一个 result。全改成空实现，等于所有请求都不回复，Dart 侧那些 await 全部挂起，启动流程走不下去
+
+于是换个思路：先分清哪些分支的回执是必须等的（初始化），哪些发出去就不管了（展示类），只处理后者
+
+怎么找到那些分支？抓 logcat。启动约 5 秒后广告弹出来，日志里留下了痕迹：
+
+```text
+YfAdsPlugin method: requestInteractionAd
+onAdSuccess   {"ad_type":"type_interaction","ecpm":"837","adnID":"12"}
+YfAdsPlugin method: showInterstitialAd
+onAdShow      {"ad_type":"type_interaction", ...}
+```
+
+当然如果日志里没漏名字，Frida hook MethodChannel.setMethodCallHandler，运行时把所有注册的通道和 handler 打出来也可以
+
+查找`YfAdsPlugin method:`定位到`d4/a.java:307    h4.b.c("YfAdsPlugin method: " + str);`
+
+![广告方法分发](assets/images/copymanga/method-channel.png)
+
+找到这里
+
+```text
+public static String f43871b = "initAdsSDK";
+public static String f43880k = "requestSplashAd";
+public static String f43881l = "showSplashAd";
+public static String f43874e = "requestInteractionAd";
+public static String f43875f = "showInterstitialAd";
+public static String f43872c = "requestRewardVideoAd";
+public static String f43873d = "showRewardVideoAd";
+```
+
+依次追入，如果是有result.success的证明是需要等回调的，不能直接使它`return void`，其他的直接强制返回就行
+
+开屏比较特殊——它不走插件分发，而是跳去一个独立 Activity（YFSplashActivity）。它的 onCreate 也在被壳抽空的 63 个方法里，按常规补了 invoke-super 之后还是卡：因为它的原实现是"显示广告 + 倒计时后关闭"，关闭逻辑恰好在那段被抽走的代码里，所以页面永远不退出，Dart 侧一直等 onAdClosed
+
+但是在同一个类里保留了一个 b() 方法，实现是完好的，语义是收尾回主界面，强制提前即可
+
+最后重打包，签名即可，能正常启动
+
+本来是想尝试过vip的，但是似乎是服务器校验，我没学过协议方面的知识，留个坑下次吧
