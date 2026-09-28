@@ -41,13 +41,20 @@
         <div id="bg-image"></div>
         <div class="banner-content"></div>
     </header>
-    <main>
+    <main class="article-layout">
         <article class="article-shell" id="article-shell">
             <div class="article-meta"><span id="article-date" aria-hidden="true"></span><span class="status" id="article-status"></span></div>
             <h2 id="article-title">Loading...</h2>
             <div class="article-content" id="article-content"></div>
             <div class="end-marker">[ END OF RECORD ]</div>
         </article>
+        <aside class="article-toc" id="article-toc" aria-label="文章目录" hidden>
+            <div class="toc-header">
+                <span class="toc-label">CONTENTS</span>
+                <button class="toc-collapse" id="toc-collapse" type="button" aria-label="折叠文章目录" aria-expanded="true">−</button>
+            </div>
+            <div class="toc-body" id="toc-body" role="navigation" aria-label="文章目录列表"></div>
+        </aside>
     </main>
 
     <script src="assets/js/common.js" data-particle-color="--particle"></script>
