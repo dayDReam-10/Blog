@@ -6,6 +6,15 @@ const id = params.get('id');
 const records = typeof notesData !== 'undefined' ? notesData : [];
 const note = Array.isArray(records) ? records.find((item) => item.idDate === id) : null;
 const normalize = (content = '') => String(content).replace(/\r\n/g,'\n').replace(/<br\s*\/?>(\s*)/gi,'\n').replace(/^\s*---\s*\n?/,'').trim();
+const getArticleStats = (content) => {
+    const text = document.createElement('div');
+    text.innerHTML = marked.parse(normalize(content));
+    const plainText = text.textContent.replace(/\s+/g, '');
+    const cjkCount = (plainText.match(/[\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff]/g) || []).length;
+    const latinCount = (plainText.match(/[A-Za-z0-9]+/g) || []).reduce((total, token) => total + token.length, 0);
+    const count = cjkCount + latinCount;
+    return { count, minutes: Math.max(1, Math.ceil(count / 350)) };
+};
 const slugify = (text, used) => {
     const base = String(text).trim().toLowerCase()
         .replace(/[`~!@#$%^&*()+=\[\]{}\\|;:'",.<>/?～！￥……（）【】「」；：‘’“”，。、《》？]/g, '')
@@ -81,6 +90,9 @@ if (!note) {
     document.title = `${note.title} | DayDReam`;
     document.getElementById('article-date').textContent = '';
     document.getElementById('article-status').textContent = note.status;
+    const stats = getArticleStats(note.content);
+    document.getElementById('article-word-count').textContent = `字数 ${stats.count.toLocaleString('zh-CN')}`;
+    document.getElementById('article-reading-time').textContent = `阅读约 ${stats.minutes} 分钟`;
     document.getElementById('article-title').textContent = note.title;
     document.getElementById('article-content').innerHTML = marked.parse(normalize(note.content));
     document.querySelectorAll('#article-content img').forEach((image) => {

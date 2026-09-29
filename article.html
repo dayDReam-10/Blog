@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="assets/css/article.css">
 </head>
 
-<body data-theme="dark">
+<body data-theme="light">
     <canvas id="bg-canvas" aria-hidden="true"></canvas>
     <nav>
         <div class="nav-left" style="display: flex; align-items: center; gap: 20px;">
@@ -43,7 +43,7 @@
     </header>
     <main class="article-layout">
         <article class="article-shell" id="article-shell">
-            <div class="article-meta"><span id="article-date" aria-hidden="true"></span><span class="status" id="article-status"></span></div>
+            <div class="article-meta"><span id="article-date" aria-hidden="true"></span><span class="status" id="article-status"></span><span class="article-stats" id="article-stats" aria-label="文章统计"><span id="article-word-count">字数 --</span><span class="stats-divider" aria-hidden="true">·</span><span id="article-reading-time">阅读约 -- 分钟</span></span></div>
             <h2 id="article-title">Loading...</h2>
             <div class="article-content" id="article-content"></div>
             <div class="end-marker">[ END OF RECORD ]</div>
