@@ -98,6 +98,11 @@ const createToc = () => {
     toc.hidden = false;
 
     const collapse = document.getElementById('toc-collapse');
+    if (collapse && window.matchMedia('(max-width: 700px)').matches) {
+        toc.classList.add('is-collapsed');
+        collapse.textContent = '+';
+        collapse.setAttribute('aria-expanded', 'false');
+    }
     collapse?.addEventListener('click', () => {
         const collapsed = toc.classList.toggle('is-collapsed');
         collapse.textContent = collapsed ? '+' : '−';
