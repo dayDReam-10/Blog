@@ -23,7 +23,7 @@ nav { position:fixed; top:0; width:100%; height:100px; display:flex; justify-con
 main { position:relative; z-index:1; width:min(940px,calc(100% - 2rem)); margin:clamp(2rem,5vw,4rem) auto 6rem; }
 .article-layout { width:min(1200px,calc(100% - 2rem)); display:grid; grid-template-columns:minmax(0,940px) 220px; gap:2rem; align-items:start; }
 .article-shell { min-width:0; padding:0 clamp(.5rem,2vw,1.5rem) 0 0; }
-.article-toc { position:sticky; top:7.5rem; align-self:start; overflow:visible; padding-left:1rem; border-left:1px solid var(--border); transition:opacity .2s ease, transform .2s ease; }
+.article-toc { position:sticky; top:0; align-self:start; overflow:visible; padding-left:1rem; border-left:1px solid var(--border); transition:opacity .2s ease, transform .2s ease; }
 .article-toc[hidden] { display:none; }
 .toc-header { display:flex; align-items:center; justify-content:space-between; padding:.15rem .35rem .8rem; border-bottom:1px solid var(--border); color:var(--accent); font:700 .72rem 'Fira Code',monospace; letter-spacing:1.5px; }
 .toc-collapse { width:1.5rem; height:1.5rem; border:1px solid var(--border); background:transparent; color:var(--muted); cursor:pointer; font:1rem 'Fira Code',monospace; line-height:1; }
