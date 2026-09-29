@@ -15,6 +15,36 @@ const getArticleStats = (content) => {
     const count = cjkCount + latinCount;
     return { count, minutes: Math.max(1, Math.ceil(count / 350)) };
 };
+const enableAutoHideNavbar = () => {
+    const navbar = document.querySelector('body > nav');
+    const article = document.getElementById('article-shell');
+    if (!navbar || !article) return;
+
+    let lastScrollY = window.scrollY;
+    let framePending = false;
+    const updateNavbar = () => {
+        const scrollY = window.scrollY;
+        const articleTop = article.getBoundingClientRect().top + scrollY;
+        const collapseAt = Math.max(0, articleTop - navbar.offsetHeight - 16);
+        const scrollingDown = scrollY > lastScrollY;
+
+        if (scrollY < collapseAt || scrollY < lastScrollY) {
+            navbar.classList.remove('nav-hidden');
+        } else if (scrollingDown) {
+            navbar.classList.add('nav-hidden');
+        }
+
+        lastScrollY = scrollY;
+        framePending = false;
+    };
+
+    window.addEventListener('scroll', () => {
+        if (framePending) return;
+        framePending = true;
+        requestAnimationFrame(updateNavbar);
+    }, { passive: true });
+    updateNavbar();
+};
 const slugify = (text, used) => {
     const base = String(text).trim().toLowerCase()
         .replace(/[`~!@#$%^&*()+=\[\]{}\\|;:'",.<>/?～！￥……（）【】「」；：‘’“”，。、《》？]/g, '')
@@ -104,5 +134,6 @@ if (!note) {
     const firstHeading = document.querySelector('#article-content h1, #article-content h2');
     if (firstHeading && firstHeading.textContent.trim() === note.title.trim()) firstHeading.remove();
     createToc();
+    enableAutoHideNavbar();
 }
 })();
