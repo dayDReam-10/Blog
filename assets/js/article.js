@@ -58,7 +58,7 @@ const slugify = (text, used) => {
 const createToc = () => {
     const toc = document.getElementById('article-toc');
     const body = document.getElementById('toc-body');
-    const headings = [...document.querySelectorAll('#article-content h1, #article-content h2, #article-content h3, #article-content h4')];
+    const headings = [...document.querySelectorAll('#article-content h1, #article-content h2, #article-content h3, #article-content h4, #article-content h5, #article-content h6')];
     if (!toc || !body || headings.length === 0) return;
 
     const usedIds = new Set();
