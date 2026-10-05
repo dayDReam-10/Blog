@@ -1,7 +1,7 @@
 Title: ELF文件格式及其加载流程
 DateTime: 2026.10.05 / 12:00
 Id: 20261005-elf-basics
-Order: 5
+Order: 4
 Status: ELF Fundamentals
 Color: #f97316
 ---
@@ -1939,4 +1939,3 @@ out:
     │ ELF 头              │
 低地址 0x400000
 ```
-
