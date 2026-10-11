@@ -29,6 +29,8 @@
                 cell.classList.add('selected');
                 const target = document.querySelector(`.timeline-item[data-date="${fDate}"]`);
                 if (target) {
+                    const group = target.closest('.article-group');
+                    if (group && !group.classList.contains('is-open')) group.querySelector('.archive-toggle').click();
                     document.querySelectorAll('.timeline-item').forEach(i => i.classList.remove('highlight'));
                     target.classList.add('highlight');
                     target.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -62,7 +64,53 @@
     const timelineContainer = document.getElementById('journal-timeline');
     if (timelineContainer && typeof notesData !== 'undefined') {
         const fragment = document.createDocumentFragment();
-        notesData.forEach(note => {
+        const isReverseNote = (note) => /reverse|security|environment detection|elf|ptrace|pwn/i.test(note.status) || /RE笔记|逆向/.test(note.title);
+        const reverseNotes = notesData.filter(isReverseNote).sort((a, b) => {
+            const timestamp = (note) => Date.parse(`${note.date}T${(note.datetime.split('/')[1] || '00:00').trim()}:00`) || 0;
+            return timestamp(b) - timestamp(a);
+        });
+        const articleLink = (note) => {
+            const link = document.createElement('a');
+            link.className = 'archive-link';
+            link.id = 'note-' + note.idDate;
+            link.dataset.date = note.date;
+            link.href = `article.html?id=${encodeURIComponent(note.idDate)}`;
+            const title = document.createElement('span');
+            title.className = 'archive-title';
+            title.textContent = note.title;
+            const status = document.createElement('span');
+            status.className = 'archive-status';
+            status.textContent = note.status;
+            status.style.color = note.color;
+            link.append(status, title);
+            return link;
+        };
+        if (reverseNotes.length) {
+            const group = document.createElement('section');
+            group.className = 'timeline-item article-group';
+            group.setAttribute('aria-label', '逆向与二进制安全文章');
+            group.innerHTML = `<div class="timeline-dot"></div>
+                <div class="timeline-card archive-card">
+                    <div class="archive-heading"><span>REVERSE ENGINEERING</span><span class="archive-count">${reverseNotes.length} RECORDS</span></div>
+                    <div class="archive-latest"><span class="archive-latest-label">LATEST ENTRY</span></div>
+                    <button type="button" class="archive-toggle" aria-expanded="false" aria-controls="reverse-archive"><span>展开其余 ${reverseNotes.length - 1} 篇</span><span class="archive-chevron" aria-hidden="true">⌄</span></button>
+                    <div class="archive-panel" id="reverse-archive" inert><div class="archive-panel-inner"><div class="archive-list"></div></div></div>
+                </div>`;
+            group.querySelector('.archive-latest').appendChild(articleLink(reverseNotes[0]));
+            const list = group.querySelector('.archive-list');
+            reverseNotes.slice(1).forEach(note => list.appendChild(articleLink(note)));
+            const button = group.querySelector('.archive-toggle');
+            const panel = group.querySelector('.archive-panel');
+            if (reverseNotes.length === 1) button.hidden = true;
+            button.addEventListener('click', () => {
+                const open = group.classList.toggle('is-open');
+                button.setAttribute('aria-expanded', String(open));
+                button.querySelector('span').textContent = open ? '收起文章' : `展开其余 ${reverseNotes.length - 1} 篇`;
+                panel.inert = !open;
+            });
+            fragment.appendChild(group);
+        }
+        notesData.filter(note => !isReverseNote(note)).forEach(note => {
             const item = document.createElement('div');
             item.className = 'timeline-item';
             item.setAttribute('data-date', note.date);

@@ -13,10 +13,10 @@ nav.nav-hidden { transform:translateY(calc(-100% - 1px)); opacity:0; pointer-eve
 .nav-brand { color:var(--main-text); text-decoration:none; font-size:1.4rem; font-weight:900; letter-spacing:5px; }
 .view-projects-btn { color:var(--main-text); text-decoration:none; font-size:.85rem; font-weight:700; letter-spacing:2px; padding:8px 16px; position:relative; transition:all .3s ease; display:inline-block; font-family:'Fira Code','Courier New',monospace; }
 .view-projects-btn::before,.view-projects-btn::after { content:''; position:absolute; width:10px; height:10px; border:1px solid transparent; transition:all .3s ease-out; }
-.view-projects-btn::before { top:0; left:-5px; border-top-color:#fff; border-left-color:#fff; }
-.view-projects-btn::after { bottom:0; right:-5px; border-bottom-color:#fff; border-right-color:#fff; }
-.view-projects-btn:hover { color:#fff; letter-spacing:4px; text-shadow:0 0 8px rgba(255,255,255,.5); }
-.view-projects-btn:hover::before,.view-projects-btn:hover::after { width:calc(100% + 10px); height:100%; border-color:#fff; }
+.view-projects-btn::before { top:0; left:-5px; border-top-color:currentColor; border-left-color:currentColor; }
+.view-projects-btn::after { bottom:0; right:-5px; border-bottom-color:currentColor; border-right-color:currentColor; }
+.view-projects-btn:hover { color:var(--accent-color); letter-spacing:4px; text-shadow:0 0 8px var(--glass-border); }
+.view-projects-btn:hover::before,.view-projects-btn:hover::after { width:calc(100% + 10px); height:100%; border-color:currentColor; }
 .theme-switch-wrapper { display:flex; align-items:center; cursor:pointer; padding:4px; background:var(--toggle-bg); border:1px solid var(--glass-border); border-radius:20px; width:58px; height:30px; position:relative; }
 .theme-switch-thumb { width:22px; height:22px; background:var(--accent-color); border-radius:50%; position:absolute; left:4px; transition:transform .4s cubic-bezier(.68,-.55,.265,1.55); display:flex; align-items:center; justify-content:center; }
 .theme-switch-thumb svg { width:14px; height:14px; fill:white; }
