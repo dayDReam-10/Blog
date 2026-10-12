@@ -160,29 +160,11 @@
                 </div>
             </div>
 
-            <!-- 日历模块 -->
-            <div class="monitor-card" style="padding: 20px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                    <span
-                        style="font-size: 0.65rem; color: var(--accent-color); letter-spacing: 2px; font-weight: bold;">CALENDAR</span>
-                    <span id="calendar-month-year"
-                        style="font-size: 0.75rem; color: var(--main-text); font-weight: bold;"></span>
-                </div>
-                <div
-                    style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; margin-bottom: 10px;">
-                    <div style="font-size: 0.65rem; color: var(--meta-text);">Su</div>
-                    <div style="font-size: 0.65rem; color: var(--meta-text);">Mo</div>
-                    <div style="font-size: 0.65rem; color: var(--meta-text);">Tu</div>
-                    <div style="font-size: 0.65rem; color: var(--meta-text);">We</div>
-                    <div style="font-size: 0.65rem; color: var(--meta-text);">Th</div>
-                    <div style="font-size: 0.65rem; color: var(--meta-text);">Fr</div>
-                    <div style="font-size: 0.65rem; color: var(--meta-text);">Sa</div>
-                </div>
-                <div id="calendar-grid"
-                    style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center;">
-                    <!-- 日历网格动态生成 -->
-                </div>
-            </div>
+            <section class="sidebar-tags-widget reading-widget" aria-labelledby="reading-title">
+                <h3 id="reading-title">Currently reading</h3>
+                <p id="reading-empty" class="reading-empty">书架正在整理中</p>
+                <ul id="reading-list" class="reading-list"></ul>
+            </section>
 
             <div class="sidebar-tags-widget">
                 <h3>Knowledge Tags</h3>
@@ -210,7 +192,7 @@
                 <h3>Navigations</h3>
                 <ul>
                     <li><a href="#">Home</a></li>
-                    <li><a href="#">Projects</a></li>
+                    <li><a href="Project.html">DashBoard</a></li>
                     <li><a href="#">Archive</a></li>
                     <li><a href="#">About</a></li>
                 </ul>
@@ -232,6 +214,7 @@
 
     <script src="assets/js/common.js" data-particle-speed="0.4" data-particle-distance="200"></script>
     <script src="assets/js/github.js"></script>
+    <script src="assets/data/books.js"></script>
     <script src="assets/js/projects.js"></script>
 </body>
 
