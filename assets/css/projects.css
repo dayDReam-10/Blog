@@ -453,7 +453,7 @@ nav.scrolled {
 }
 
 .view-projects-btn:hover {
-    color: var(--accent-color);
+    color: var(--main-text);
     letter-spacing: 4px;
     text-shadow: 0 0 8px var(--glass-border);
 }

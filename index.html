@@ -123,17 +123,15 @@
                 </div>
             </div>
 
-            <!-- 日历模块 -->
-            <div class="calendar-widget">
-                <div class="calendar-header">
-                    <span id="current-month-year">MARCH 2024</span>
-                    <div class="calendar-nav">
-                        <button onclick="prevMonth()">&#10094;</button>
-                        <button onclick="nextMonth()">&#10095;</button>
-                    </div>
+            <section class="music-widget" aria-labelledby="music-title">
+                <div class="music-heading">
+                    <span class="music-icon" aria-hidden="true">♫</span>
+                    <h2 id="music-title">RECENTLY PLAYED</h2>
+                    <span class="music-provider">KUGOU</span>
                 </div>
-                <div class="calendar-grid" id="calendar-body"></div>
-            </div>
+                <p class="music-message" id="music-message" role="status">最近播放还在准备中</p>
+                <ol class="music-list" id="music-list" hidden></ol>
+            </section>
 
             <!-- 标签模块 (圆角药丸样式) -->
             <div class="tags-widget">
@@ -196,6 +194,8 @@
     <script src="assets/data/notes_data.js"></script>
     <script src="assets/js/github.js"></script>
     <script src="assets/js/index.js"></script>
+    <script src="assets/js/music-config.js"></script>
+    <script src="assets/js/music.js"></script>
 </body>
 
 </html>
