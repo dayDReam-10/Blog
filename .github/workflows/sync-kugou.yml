@@ -15,19 +15,25 @@ concurrency:
 jobs:
   sync:
     runs-on: ubuntu-latest
+    env:
+      KUGOU_API_COMMIT: 5d6c9f7b180279c9dd08bc6f7159de52a856d587
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           fetch-depth: 0
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version: 22
 
-      - name: Download KuGou API
+      - name: Download pinned KuGou API
         run: |
-          git clone --depth 1 https://github.com/MakcRe/KuGouMusicApi.git "$RUNNER_TEMP/KuGouMusicApi"
-          npm install --omit=dev --prefix "$RUNNER_TEMP/KuGouMusicApi"
+          curl --fail --silent --show-error --location \
+            "https://codeload.github.com/MakcRe/KuGouMusicApi/zip/$KUGOU_API_COMMIT" \
+            --output "$RUNNER_TEMP/kugou-api.zip"
+          unzip -q "$RUNNER_TEMP/kugou-api.zip" -d "$RUNNER_TEMP"
+          mv "$RUNNER_TEMP/KuGouMusicApi-$KUGOU_API_COMMIT" "$RUNNER_TEMP/KuGouMusicApi"
+          npm ci --omit=dev --prefix "$RUNNER_TEMP/KuGouMusicApi"
 
       - name: Generate public song list
         env:

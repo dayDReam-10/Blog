@@ -34,6 +34,8 @@
 
 不要把该 JSON 写进源码、Issue、聊天记录或普通仓库变量。配置完成后，在仓库 `Actions → Sync KuGou recent songs → Run workflow` 手动运行一次。授权过期时，本机重新扫码，再更新同名 Secret。
 
+工作流将 GitHub 官方 Actions 和 KuGouMusicApi 固定到已验证的提交，并使用上游锁文件安装依赖，避免每次自动执行第三方仓库最新代码。更新这些固定版本前应重新检查差异。
+
 ## 数据来源
 
 本地服务调用社区项目 [KuGouMusicApi](https://github.com/MakcRe/KuGouMusicApi) 的二维码登录和 `/user/history` 接口，缓存最近播放 1 分钟。该项目不是酷狗官方 API；使用时请遵守当地法规和上游项目免责声明。
