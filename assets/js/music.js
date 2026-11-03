@@ -4,11 +4,17 @@
     const widget = document.querySelector('.music-widget');
     const list = document.getElementById('music-list');
     const message = document.getElementById('music-message');
+    const login = document.getElementById('music-login');
+    const loginStart = document.getElementById('music-login-start');
+    const loginReset = document.getElementById('music-login-reset');
+    const qr = document.getElementById('music-qr');
     if (!widget || !list || !message) return;
     const config = window.musicConfig || {};
     const endpoint = String(config.recentEndpoint || '').trim();
     if (!endpoint) return;
     const limit = Math.max(1, Math.min(10, Number(config.limit) || 5));
+    const localMode = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost';
+    if (localMode && login) login.hidden = false;
 
     const safeUrl = (value) => {
         if (typeof value !== 'string' || !value.trim()) return '';
@@ -61,7 +67,7 @@
     const loadRecent = async () => {
         const url = safeUrl(endpoint);
         if (!url) {
-            message.textContent = '最近播放暂时无法加载';
+            message.textContent = localMode ? '请先连接酷狗账号' : '最近播放暂时无法加载';
             return;
         }
         widget.setAttribute('aria-busy', 'true');
@@ -91,6 +97,61 @@
             widget.setAttribute('aria-busy', 'false');
         }
     };
+
+    const pollLogin = async () => {
+        if (!qr || qr.hidden) return;
+        try {
+            const response = await fetch('/api/music/login/check', { cache: 'no-store' });
+            const data = await response.json();
+            if (data.status === 'authorized') {
+                qr.hidden = true;
+                loginReset.hidden = true;
+                message.hidden = false;
+                message.textContent = '已连接酷狗，正在读取最近播放…';
+                loginStart.disabled = false;
+                loadRecent();
+                return;
+            }
+            if (data.status === 'expired') {
+                message.textContent = '二维码已过期，请重新生成';
+                loginStart.disabled = false;
+                return;
+            }
+            message.textContent = data.status === 'confirm' ? '请在酷狗 App 中确认登录' : '等待酷狗 App 扫码…';
+            setTimeout(pollLogin, 1800);
+        } catch {
+            message.textContent = '登录状态检查失败，请重试';
+            loginStart.disabled = false;
+        }
+    };
+
+    const startLogin = async () => {
+        if (!localMode || !loginStart || !qr) return;
+        loginStart.disabled = true;
+        message.hidden = false;
+        message.textContent = '正在生成酷狗登录二维码…';
+        try {
+            const response = await fetch('/api/music/login/start', { cache: 'no-store' });
+            if (!response.ok) throw new Error();
+            const data = await response.json();
+            qr.src = data.image;
+            qr.hidden = false;
+            loginReset.hidden = false;
+            message.textContent = '使用酷狗 App 扫码并确认登录';
+            pollLogin();
+        } catch {
+            message.textContent = '二维码生成失败，请确认本地服务可以访问酷狗';
+            loginStart.disabled = false;
+        }
+    };
+
+    if (loginStart) loginStart.addEventListener('click', startLogin);
+    if (loginReset) loginReset.addEventListener('click', () => {
+        qr.hidden = true;
+        loginReset.hidden = true;
+        loginStart.disabled = false;
+        startLogin();
+    });
 
     loadRecent();
 })();

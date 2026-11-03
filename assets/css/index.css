@@ -658,6 +658,11 @@ nav.scrolled {
 .music-icon { font-size:1.35rem; line-height:1; }
 .music-provider { margin-left:auto; font:.6rem 'Fira Code',monospace; color:var(--meta-text); letter-spacing:1px; }
 .music-message { color:var(--meta-text); font-size:.8rem; line-height:1.7; padding:.5rem 0; }
+.music-login { display:flex; flex-direction:column; align-items:flex-start; gap:10px; margin-top:10px; }
+.music-login[hidden] { display:none; }
+.music-login-button { padding:7px 12px; border:1px solid var(--glass-border); border-radius:4px; background:transparent; color:var(--main-text); cursor:pointer; }
+.music-login-button:disabled { cursor:wait; opacity:.6; }
+.music-qr { width:180px; height:180px; border:1px solid var(--glass-border); background:#fff; }
 .music-list { list-style:none; padding:0; margin:0; }
 .music-track { display:flex; gap:.75rem; align-items:center; padding:.85rem 0; border-top:1px solid var(--glass-border); }
 .music-cover { flex:0 0 42px; width:42px; height:42px; border-radius:8px; overflow:hidden; display:grid; place-items:center; background:var(--toggle-bg); color:var(--meta-text); }

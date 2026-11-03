@@ -1,6 +1,10 @@
 # 接入酷狗最近播放
 
-首页已用 RECENTLY PLAYED 替换日历。`assets/js/music-config.js` 中的 `recentEndpoint` 按要求留空，当前显示“最近播放还在准备中”，不会请求酷狗账号数据。
+当前实现是本机模式，参见[本机使用说明](local-kugou.md)。本机 API 已监听 `127.0.0.1`，首页配置使用同源 `/api/music/recent`；酷狗登录态保存在 Git 忽略的 `.local/kugou-auth.json`。
+
+以下内容描述的是将来部署公网后端的接口约定，不是当前部署状态。
+
+首页已用 RECENTLY PLAYED 替换日历。若没有启动本机服务，页面无法读取本机歌曲。
 
 ## 后端取数
 

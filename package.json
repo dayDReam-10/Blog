@@ -1,0 +1,7 @@
+{
+  "name": "daydream-blog-local-music",
+  "private": true,
+  "scripts": {
+    "start": "node scripts/local-music-server.js"
+  }
+}
