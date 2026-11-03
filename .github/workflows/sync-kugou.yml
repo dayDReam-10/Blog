@@ -1,0 +1,49 @@
+name: Sync KuGou recent songs
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17,47 * * * *'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-kugou-recent-songs
+  cancel-in-progress: true
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Download KuGou API
+        run: |
+          git clone --depth 1 https://github.com/MakcRe/KuGouMusicApi.git "$RUNNER_TEMP/KuGouMusicApi"
+          npm install --omit=dev --prefix "$RUNNER_TEMP/KuGouMusicApi"
+
+      - name: Generate public song list
+        env:
+          KUGOU_AUTH_JSON: ${{ secrets.KUGOU_AUTH_JSON }}
+          KUGOU_API_DIR: ${{ runner.temp }}/KuGouMusicApi
+        run: node scripts/sync-kugou-static.js
+
+      - name: Commit updated songs
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/data/recent-songs.json
+          if git diff --cached --quiet; then
+            echo "Recent songs are unchanged."
+            exit 0
+          fi
+          git commit -m "Update recent KuGou songs"
+          git pull --rebase origin main
+          git push origin HEAD:main

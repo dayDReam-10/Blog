@@ -21,7 +21,18 @@
 
 ## 线上和本地的区别
 
-这个模式用于“在你的电脑上自己看”。访问 `https://dr-blog.top` 的访客或你手机上的浏览器无法访问电脑的 `127.0.0.1`。在电脑上打开线上域名也不会显示本机歌曲；请打开 `http://127.0.0.1:4173/`。若要让公网域名显示，需要另行部署受保护的后端，不应开放电脑端口或把 token 放到前端。
+本机访问 `http://127.0.0.1:4173/` 时优先读取实时接口。线上 `https://dr-blog.top` 读取 `assets/data/recent-songs.json`，该文件由 GitHub Actions 定时生成；访客只能看到歌曲展示字段，不会看到登录入口或 token。
+
+## 无服务器的线上同步
+
+仓库包含 `.github/workflows/sync-kugou.yml`，可手动运行，也会在每小时第 17、47 分钟尝试同步。GitHub 的定时任务可能延迟，因此它不是实时播放状态。
+
+首次配置需要在 GitHub 仓库的 `Settings → Secrets and variables → Actions` 新建仓库 Secret：
+
+- 名称：`KUGOU_AUTH_JSON`
+- 内容：本机 `.local/kugou-auth.json` 的完整 JSON
+
+不要把该 JSON 写进源码、Issue、聊天记录或普通仓库变量。配置完成后，在仓库 `Actions → Sync KuGou recent songs → Run workflow` 手动运行一次。授权过期时，本机重新扫码，再更新同名 Secret。
 
 ## 数据来源
 

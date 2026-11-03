@@ -10,10 +10,10 @@
     const qr = document.getElementById('music-qr');
     if (!widget || !list || !message) return;
     const config = window.musicConfig || {};
-    const endpoint = String(config.recentEndpoint || '').trim();
+    const localMode = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost';
+    const endpoint = localMode ? '/api/music/recent' : String(config.recentEndpoint || 'assets/data/recent-songs.json').trim();
     if (!endpoint) return;
     const limit = Math.max(1, Math.min(10, Number(config.limit) || 5));
-    const localMode = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost';
     if (localMode && login) login.hidden = false;
 
     const safeUrl = (value) => {
@@ -74,12 +74,15 @@
         message.textContent = '正在读取最近播放…';
         const controller = new AbortController();
         const timer = setTimeout(() => controller.abort(), 8000);
+        let unauthorized = false;
         try {
             const response = await fetch(url, {
                 credentials: 'omit',
                 headers: { Accept: 'application/json' },
                 signal: controller.signal
             });
+            unauthorized = response.status === 401;
+            if (localMode && loginStart) loginStart.hidden = !unauthorized;
             if (!response.ok) throw new Error('Music request failed');
             const data = await response.json();
             if (!Array.isArray(data.songs)) throw new Error('Invalid music response');
@@ -90,8 +93,9 @@
             message.textContent = '还没有最近播放记录';
         } catch {
             message.hidden = false;
-            message.textContent = '最近播放暂时无法加载';
+            message.textContent = localMode && unauthorized ? '请先连接酷狗账号' : '最近播放暂时无法加载';
             list.hidden = true;
+            if (localMode && loginStart) loginStart.hidden = !unauthorized;
         } finally {
             clearTimeout(timer);
             widget.setAttribute('aria-busy', 'false');
@@ -109,6 +113,7 @@
                 message.hidden = false;
                 message.textContent = '已连接酷狗，正在读取最近播放…';
                 loginStart.disabled = false;
+                loginStart.hidden = true;
                 loadRecent();
                 return;
             }
