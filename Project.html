@@ -4,25 +4,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DayDReam's Lab | Cyber Space</title>
+    <title>文章 | DayDReam</title>
     <link rel="icon" href="./assets/images/cy.png" type="image/x-icon">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&family=Fira+Code:wght@400;500&family=Noto+Serif+SC:wght@400;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&amp;family=Fira+Code:wght@400;500;700&amp;family=Noto+Serif+SC:wght@400;700&amp;display=swap"
         rel="stylesheet">
 
     <link rel="stylesheet" href="assets/css/projects.css">
+    <link rel="stylesheet" href="assets/css/article-list.css">
+    <link rel="stylesheet" href="assets/css/navigation.css">
+    <script src="assets/js/page-transitions.js"></script>
+    <script src="assets/js/theme.js" defer></script>
 </head>
 
 <body data-theme="light">
-    <canvas id="bg-canvas"></canvas>
-
-    <div class="side-bar-left">
-        <a href="https://github.com/dayDReam-10" class="social-link" target="_blank">GITHUB</a>
-        <a href="#" class="social-link">RSS FEED</a>
-    </div>
+    <canvas class="ambient-rain" id="ambient-rain" aria-hidden="true"></canvas>
 
     <!-- TEST: 暂时关闭开场文字滑入与黑屏淡出动画。
     <div id="opening-screen">
@@ -37,7 +36,7 @@
 
     <nav id="navbar">
         <div class="nav-left" style="display: flex; align-items: center; gap: 20px;">
-            <a href="#" class="nav-brand">DAYDREAM</a>
+            <a href="index.html" class="nav-brand">DAYDREAM</a>
             <a href="index.html" class="view-projects-btn">HOME</a>
         </div>
         <div class="theme-switch-wrapper" id="theme-toggle">
@@ -67,54 +66,19 @@
         </div>
     </nav>
 
-    <header class="site-banner">
-        <div id="bg-image"></div>
-        <div class="banner-content">
-            <h1>DayDReam</h1>
-            <p style="color: var(--main-text); opacity: 0.4; letter-spacing: 8px; margin-top: 10px;">REVERSE & CORE
-                ARCHITECT</p>
-        </div>
-    </header>
-
     <main class="main-grid">
-        <div class="content-stream">
-            <article class="post-card"
-                onclick="handleCardClick(this, 'https://github.com/dayDReam-10/RE-PWN-Writeups')">
-                <span style="color:var(--accent-color); font-size:0.7rem; letter-spacing:3px;">SYSTEM.LOG</span>
-                <h2 style="margin: 15px 0;">CTF</h2>
+        <aside class="tags-rail" aria-labelledby="tags-title">
+            <h2 id="tags-title">TAGS</h2>
+            <ul class="tags-rail-list">
+                <li class="rail-all"><button type="button" data-category="All"><svg class="rail-tag-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>All</button></li>
+                <li class="rail-reverse"><button type="button" data-category="Reverse"><svg class="rail-tag-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m8 6-6 6 6 6m8-12 6 6-6 6M14 3l-4 18"/></svg>Reverse</button></li>
+                <li class="rail-acm"><button type="button" data-category="ACM"><svg class="rail-tag-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h10v5a5 5 0 0 1-10 0V3Zm0 2H3v2a4 4 0 0 0 4 4m10-6h4v2a4 4 0 0 1-4 4m-5 2v5m-5 3h10m-8 0v-3h6v3"/></svg>ACM</button></li>
+                <li class="rail-notes"><button type="button" data-category="Notes"><svg class="rail-tag-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3" width="15" height="18" rx="2"/><path d="M3 7h4M3 12h4M3 17h4m4-9h5m-5 4h5m-5 4h3"/></svg>Notes</button></li>
+                <li class="rail-pwn"><button type="button" data-category="Pwn"><svg class="rail-tag-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="3"/><path d="m6 9 4 3-4 3m7 0h5"/></svg>Pwn</button></li>
+            </ul>
+        </aside>
+        <section class="content-stream article-stream" id="article-list" aria-label="文章列表"></section>
 
-                <div class="sync-label">
-                    <div class="sync-dot"></div>
-                    <span id="re-pwn-update">SYNCING_REMOTE_DATA...</span>
-                </div>
-
-                <p style="color:var(--meta-text);">逆向工程与 Pwn 漏洞利用的实战记录。探索二进制世界的深层逻辑。</p>
-            </article>
-
-            <article class="post-card" onclick="handleCardClick(this, 'https://github.com/Lustrous-Hope-Makes-Dreams-Radiance')">
-                <span style="color:var(--accent-color); font-size:0.7rem; letter-spacing:3px;">DEV.NOTE</span>
-                <h2 style="margin: 15px 0;">Lustrous Hope Makes Dreams Radiance</h2>
-
-                <div class="sync-label">
-                    <div class="sync-dot"></div>
-                    <span id="works-update">INITIALIZING_GIT_CONNECTION...</span>
-                </div>
-
-                <p style="color:var(--meta-text);">基于高性能事件驱动的插件框架。致力于打造最轻量、最稳定的游戏核心模块。</p>
-            </article>
-
-            <article class="post-card" onclick="handleCardClick(this, 'https://github.com/dayDReam-10/StudioWork')">
-                <span style="color:var(--accent-color); font-size:0.7rem; letter-spacing:3px;">DEV.NOTE</span>
-                <h2 style="margin: 15px 0;">StudioWork</h2>
-
-                <div class="sync-label">
-                    <div class="sync-dot"></div>
-                    <span id="studiowork-update">INITIALIZING_GIT_CONNECTION...</span>
-                </div>
-
-                <p style="color:var(--meta-text);">校内工作室考核</p>
-            </article>
-        </div>
 
         <aside class="sidebar-right">
             <div class="profile-card-wrapper">
@@ -129,29 +93,40 @@
                     <div style="text-align: center; margin-top: 10px;">
                         <h2
                             style="font-size: 1.6rem; font-weight: 700; color: var(--main-text); margin: 0; letter-spacing: -0.5px;">
-                            DayDReam</h2>
+                            dayDReam</h2>
                         <p
                             style="font-size: 0.8rem; color: var(--meta-text); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 5px;">
                             TURNING CHAOS INTO ALGORITHMS</p>
                     </div>
 
-                    <div
-                        style="display: flex; justify-content: space-around; width: 100%; margin: 10px 0; padding: 15px 0; border-top: 1px solid var(--glass-border); border-bottom: 1px solid var(--glass-border);">
-                        <div style="text-align: center;">
-                            <div style="font-size: 0.8rem; color: var(--meta-text); margin-bottom: 4px;">Repos</div>
-                            <div id="github-repos"
-                                style="font-size: 1.3rem; font-weight: 500; color: var(--accent-color);">-</div>
-                        </div>
-                        <div style="text-align: center;">
-                            <div style="font-size: 0.8rem; color: var(--meta-text); margin-bottom: 4px;">Followers</div>
-                            <div id="github-followers"
-                                style="font-size: 1.3rem; font-weight: 500; color: var(--accent-color);">-</div>
-                        </div>
-                        <div style="text-align: center;">
-                            <div style="font-size: 0.8rem; color: var(--meta-text); margin-bottom: 4px;">Following</div>
-                            <div id="github-following"
-                                style="font-size: 1.3rem; font-weight: 500; color: var(--accent-color);">-</div>
-                        </div>
+                    <div class="profile-socials" role="group" aria-label="我的社交主页">
+                        <a class="profile-social profile-social-github" href="https://github.com/dayDReam-10" target="_blank" rel="noopener noreferrer" aria-label="GitHub 主页（新窗口打开）" title="GitHub">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M9 19c-4.3 1.3-4.3-2-6-2.5M15 22v-3.9c0-1.1-.4-1.9-.9-2.3 3-.3 6.2-1.5 6.2-6.8a5.3 5.3 0 0 0-1.4-3.7 4.9 4.9 0 0 0-.1-3.7s-1.1-.4-3.8 1.4a13 13 0 0 0-6 0C6.3 1.2 5.2 1.6 5.2 1.6a4.9 4.9 0 0 0-.1 3.7A5.3 5.3 0 0 0 3.7 9c0 5.3 3.2 6.5 6.2 6.8-.5.4-.9 1.2-.9 2.3V22"/>
+                            </svg>
+                        </a>
+                        <a class="profile-social profile-social-kanxue" href="https://bbs.kanxue.com/homepage-1073886.htm" target="_blank" rel="noopener noreferrer" aria-label="看雪主页（新窗口打开）" title="看雪">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M12 2v20M3.34 7l17.32 10M3.34 17 20.66 7M9 4l3 3 3-3M9 20l3-3 3 3M3.57 10.6l4.1-1.1-1.1-4.1M17.43 18.6l-1.1-4.1 4.1-1.1M3.57 13.4l4.1 1.1-1.1 4.1M17.43 5.4l-1.1 4.1 4.1 1.1"/>
+                            </svg>
+                        </a>
+                        <a class="profile-social profile-social-bilibili" href="https://space.bilibili.com/1532439622" target="_blank" rel="noopener noreferrer" aria-label="哔哩哔哩主页（新窗口打开）" title="哔哩哔哩">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <rect x="3" y="6" width="18" height="14" rx="3"/>
+                                <path d="m7 2 3 4m7-4-3 4M7 11v3m10-3v3M9 17l3 1 3-1M7 20v1m10-1v1"/>
+                            </svg>
+                        </a>
+                        <a class="profile-social profile-social-x" href="https://x.com/kawndas" target="_blank" rel="noopener noreferrer" aria-label="X 主页 kawndas（新窗口打开）" title="X · @kawndas">
+                            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                <path d="M18.9 2H22l-6.8 7.8L23.2 22H17l-4.9-7.4L5.6 22H2.4l8.2-9.4L.8 2h6.4l4.5 6.8L18.9 2Zm-1.1 18h1.7L6.3 3.9H4.5L17.8 20Z"/>
+                            </svg>
+                        </a>
+                        <a class="profile-social profile-social-netease" href="https://music.163.com/#/user/home?id=3315923335" target="_blank" rel="noopener noreferrer" aria-label="网易云音乐主页（新窗口打开）" title="网易云音乐">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M15 3a9 9 0 1 1-7-1"/>
+                                <path d="M14.8 2.5c-2.2-.5-4.3.8-4.3 3.1 0 2.1 2.2 3.1 3.4 4.8 1.6 2.3.3 5.6-2.5 5.6a3.4 3.4 0 1 1 1.7-6.3"/>
+                            </svg>
+                        </a>
                     </div>
 
                     <button onclick="window.open('https://github.com/dayDReam-10', '_blank')"
@@ -166,19 +141,6 @@
                 <ul id="reading-list" class="reading-list"></ul>
             </section>
 
-            <div class="sidebar-tags-widget">
-                <h3>Knowledge Tags</h3>
-                <div class="tag-cloud">
-                    <span class="tag-item">Pwn</span>
-                    <span class="tag-item">Reverse</span>
-                    <span class="tag-item">Kernel</span>
-                    <span class="tag-item">Java</span>
-                    <span class="tag-item">Minecraft</span>
-                    <span class="tag-item">Exploit</span>
-                    <span class="tag-item">Assembly</span>
-                    <span class="tag-item">Web3</span>
-                </div>
-            </div>
         </aside>
     </main>
 
@@ -201,7 +163,6 @@
                 <h3>Connect</h3>
                 <ul>
                     <li><a href="#">GitHub</a></li>
-                    <li><a href="#">RSS Feed</a></li>
                     <li><a href="#">Email</a></li>
                 </ul>
             </div>
@@ -212,10 +173,12 @@
     </footer>
 
 
-    <script src="assets/js/common.js" data-particle-speed="0.4" data-particle-distance="200"></script>
-    <script src="assets/js/github.js"></script>
+    <script src="assets/js/common.js"></script>
+    <script src="assets/data/notes_data.js"></script>
+    <script src="assets/js/article-list.js"></script>
     <script src="assets/data/books.js"></script>
     <script src="assets/js/projects.js"></script>
+    <script src="assets/js/ambient-rain.js"></script>
 </body>
 
 </html>

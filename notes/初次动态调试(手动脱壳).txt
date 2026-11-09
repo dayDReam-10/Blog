@@ -3,6 +3,7 @@ DateTime: 2026.03.31 / 15:45
 Order: 10
 Status: System Update
 Color: #4ade80
+Summary: 拿一道做过的题练习动态调试，第一次用 x32dbg 手动脱掉 UPX。从栈顶断点寻找 OEP，到导出内存、修复导入表，记录这次摸索的过程与理解。
 ---
 # happy_new_year Writeup
 

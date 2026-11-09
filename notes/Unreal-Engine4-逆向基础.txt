@@ -4,6 +4,7 @@ Id: 20260923-ue4
 Order: 2
 Status: UE4 Android Reverse Engineering
 Color: #f59e0b
+Summary: 以腾讯游戏安全竞赛的一道安卓题为例，从 GUObjectArray、GWorld 和 GName 认识 UE4 对象系统，再结合 SDK 导出与运行时对象定位，一步步分析题目中的游戏逻辑。
 ---
 # Unreal Engine4引擎逆向基础
 

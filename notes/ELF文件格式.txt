@@ -4,6 +4,7 @@ Id: 20261005-elf-basics
 Order: 4
 Status: ELF Fundamentals
 Color: #f97316
+Summary: 磁盘上的 ELF，怎样变成进程中运行的代码？从文件头、节表与程序头表开始，整理符号、重定位和动态链接信息，把文件结构与实际加载流程对应起来。
 ---
 # ELF文件格式及其加载流程
 

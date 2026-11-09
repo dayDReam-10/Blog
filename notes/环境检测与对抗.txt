@@ -4,6 +4,7 @@ Id: 20260930-env-detection
 Order: 3
 Status: Environment Detection
 Color: #f97316
+Summary: 应用究竟凭什么发现 Frida 和 Root？从注入原理与权限机制出发，整理文件、端口、内存和进程等检测线索，再逐一理解这些检测的边界与对抗思路。
 ---
 # 环境检测与对抗
 

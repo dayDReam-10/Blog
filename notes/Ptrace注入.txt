@@ -4,6 +4,7 @@ Id: 20261006-ptrace-injection
 Order: 12
 Status: Ptrace Injection
 Color: #f97316
+Summary: 用 ptrace 暂停目标进程后，如何让它完成一次远程 dlopen 调用？围绕寄存器与内存操作，梳理保存现场、加载共享库和恢复执行的基本过程，并记录注入器实现。
 ---
 # Ptrace注入
 

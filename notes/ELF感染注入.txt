@@ -4,6 +4,7 @@ Id: 20261006-elf-infection
 Order: 11
 Status: ELF Infection
 Color: #f97316
+Summary: 不改源码，能否让 ELF 在加载时执行额外代码？通过两个小实验，记录 .init_array 劫持与 DT_NEEDED 注入的实现，理解重定位、段间隙和动态字符串表如何参与其中。
 ---
 # elf感染注入
 

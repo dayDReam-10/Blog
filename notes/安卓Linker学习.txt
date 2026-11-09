@@ -3,6 +3,7 @@ DateTime: 2026.11.2 / 10:00
 Order: 13
 Status: Reverse Engineering
 Color: #f6320f
+Summary: 一次 dlopen 调用背后，SO 是怎样被加载并完成初始化的？沿着 Android linker 源码追踪依赖解析、重定位与构造函数调用，理清 soinfo、DT_INIT 和 DT_INIT_ARRAY 的关系。
 ---
 # Android native linker 学习
 

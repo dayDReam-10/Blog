@@ -33,18 +33,7 @@
             .getPropertyValue(colorProperty).trim();
     }
 
-    function switchTheme() {
-        document.body.dataset.theme = document.body.dataset.theme === 'dark' ? 'light' : 'dark';
-        updateTheme();
-    }
-
-    toggle?.addEventListener('click', switchTheme);
-    toggle?.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter' || event.key === ' ') {
-            event.preventDefault();
-            switchTheme();
-        }
-    });
+    document.addEventListener('themechange', updateTheme);
 
     function resize() {
         width = window.innerWidth;

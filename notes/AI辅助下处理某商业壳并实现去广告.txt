@@ -4,6 +4,7 @@ Id: 20260925-copymanga
 Order: 6
 Status: Android Reverse Engineering
 Color: #f59e0b
+Summary: 从 CTF 练习走向一次实际应用分析：面对加壳的 Flutter 应用，借助 AI 梳理启动链、定位业务 DEX，再沿着 MethodChannel 理清广告调用与启动回执。
 ---
 # AI辅助下处理某商业壳并实现去广告
 

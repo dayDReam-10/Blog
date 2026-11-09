@@ -27,6 +27,7 @@ if (Test-Path -LiteralPath $notesDir) {
 
         foreach ($line in ($metaPart -split '\r?\n')) {
             if ($line -match '^Title:\s*(.+)$') { $note.title = $matches[1].Trim() }
+            if ($line -match '^Summary:\s*(.+)$') { $note | Add-Member -MemberType NoteProperty -Name summary -Value $matches[1].Trim() -Force }
             if ($line -match '^DateTime:\s*(.+)$') { $note.datetime = $matches[1].Trim() }
             if ($line -match '^Status:\s*(.+)$') { $note.status = $matches[1].Trim() }
             if ($line -match '^Color:\s*(.+)$') { $note.color = $matches[1].Trim() }

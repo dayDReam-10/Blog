@@ -4,6 +4,7 @@ Id: 20261103-godot-framework
 Order: 14
 Status: Reverse Engineering
 Color: #f97316
+Summary: Godot 的对象布局会随平台和构建条件变化，逆向时还能像 UE 一样找到稳定的切入点吗？从 ObjectDB、SceneTree 到 ClassDB，对照两种引擎的对象系统，梳理 Godot 的运行时结构与加载机制。
 ---
 # godot框架分析
 

@@ -1,206 +1,52 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DayDReam | Blog~</title>
-
+    <meta name="description" content="DayDReam — REVERSE & CORE ARCHITECT">
+    <meta name="theme-color" content="#101821">
+    <title>DayDReam</title>
+    <link rel="icon" href="assets/images/cy.png">
+    <link rel="preload" href="assets/images/Atri.jpg" as="image">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&family=Fira+Code:wght@400;500;700&family=Noto+Serif+SC:wght@400;700&display=swap"
-        rel="stylesheet">
-
-    <link rel="stylesheet" href="assets/css/index.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&amp;family=Fira+Code:wght@400;500;700&amp;family=Noto+Serif+SC:wght@400;700&amp;display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/landing.css">
+    <link rel="stylesheet" href="assets/css/navigation.css">
+    <script src="assets/js/page-transitions.js"></script>
+    <script src="assets/js/theme.js" defer></script>
+    <script src="assets/js/landing.js" defer></script>
 </head>
-
 <body data-theme="light">
-    <canvas id="bg-canvas"></canvas>
-
-    <div class="side-bar-left">
-        <a href="https://github.com/dayDReam-10" class="social-link" target="_blank">GITHUB</a>
-        <a href="#" class="social-link">RSS FEED</a>
-    </div>
-
-    <!-- 开场动画 -->
-    <!-- TEST: 暂时关闭开场文字滑入与黑屏淡出动画。
-    <div id="opening-screen">
-        <div class="opening-text-slider project-1">RE-PWN-Writeup</div>
-        <div class="opening-text-slider welcome-2" style="opacity: 0.3;">w e l c o m e</div>
-        <div class="opening-text-slider project-2">MCplugins</div>
-        <div class="opening-text-slider main-title">D a y D R e a m ' s &nbsp; L a b</div>
-        <div class="opening-text-slider project-3">Java</div>
-        <div class="opening-text-slider project-4">Math</div>
-    </div>
-    -->
-
-    <nav id="navbar">
-        <div class="nav-left" style="display: flex; align-items: center; gap: 20px;">
-            <a href="#" class="nav-brand">DAYDREAM</a>
-            <a href="Project.html" class="view-projects-btn">DashBoard</a>
+    <nav class="landing-nav" aria-label="主导航">
+        <div class="nav-left">
+            <a href="index.html" class="nav-brand">DAYDREAM</a>
+            <a href="Project.html" class="view-projects-btn">BLOG</a>
         </div>
-        <div class="theme-switch-wrapper" id="theme-toggle">
-            <div class="theme-switch-thumb">
-                    <!-- 太阳（月亮）切换图标，配色更明显 -->
-                    <svg class="icon-sun" viewBox="0 0 24 24" style="display: block;" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="12" cy="12" r="5" fill="#FFD600" />
-                        <g stroke="#FFD600" stroke-width="2">
-                            <line x1="12" y1="2" x2="12" y2="5" />
-                            <line x1="12" y1="19" x2="12" y2="22" />
-                            <line x1="2" y1="12" x2="5" y2="12" />
-                            <line x1="19" y1="12" x2="22" y2="12" />
-                            <line x1="4.22" y1="4.22" x2="6.34" y2="6.34" />
-                            <line x1="17.66" y1="17.66" x2="19.78" y2="19.78" />
-                            <line x1="4.22" y1="19.78" x2="6.34" y2="17.66" />
-                            <line x1="17.66" y1="6.34" x2="19.78" y2="4.22" />
-                        </g>
-                    </svg>
-                    <svg class="icon-moon" viewBox="0 0 24 24" style="display: none;" xmlns="http://www.w3.org/2000/svg">
-                        <!-- 更显眼的弯月+星星图标 -->
-                        <path d="M21 15.5A9 9 0 1 1 12 3a7 7 0 0 0 9 12.5z" fill="#fff" />
-                        <circle cx="17.5" cy="7.5" r="1.2" fill="#58a6ff" />
-                        <circle cx="15.2" cy="5.8" r="0.5" fill="#58a6ff" />
-                        <circle cx="19" cy="10" r="0.6" fill="#58a6ff" />
-                    </svg>
-                </div>
-            </div>
+        <button class="theme-switch" id="theme-toggle" type="button" aria-label="切换到夜间模式" aria-pressed="false">
+            <span class="theme-switch-thumb" aria-hidden="true">
+                <svg class="icon-sun" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="12" cy="12" r="5" fill="#FFD600"/>
+                    <g stroke="#FFD600" stroke-width="2">
+                        <path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/>
+                    </g>
+                </svg>
+                <svg class="icon-moon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 15.5A9 9 0 1 1 12 3a7 7 0 0 0 9 12.5z" fill="#fff"/>
+                    <circle cx="17.5" cy="7.5" r="1.2" fill="#58a6ff"/>
+                    <circle cx="15.2" cy="5.8" r=".5" fill="#58a6ff"/>
+                    <circle cx="19" cy="10" r=".6" fill="#58a6ff"/>
+                </svg>
+            </span>
+        </button>
     </nav>
-
-    <header class="site-banner">
-        <div id="bg-image"></div>
-        <div class="banner-content">
-            <h1>DayDReam</h1>
-            <p style="color: var(--main-text); opacity: 0.4; letter-spacing: 8px; margin-top: 10px;">REVERSE &amp; CORE
-                ARCHITECT</p>
+    <main class="landing" aria-labelledby="landing-title">
+        <div class="landing-background" aria-hidden="true"></div>
+        <div class="landing-shade" aria-hidden="true"></div>
+        <div class="landing-title">
+            <h1 id="landing-title">DayDReam</h1>
+            <p>REVERSE &amp; CORE ARCHITECT</p>
         </div>
-    </header>
-
-    <main class="main-grid">
-        <div class="timeline-container" id="journal-timeline">
-            <!-- 笔记将由 notes_data.js 自动生成在这里 -->
-        </div>
-
-        <aside class="sidebar">
-            <!-- 个人名片（完全沿用 index.html） -->
-            <div class="profile-card-wrapper">
-                <div class="profile-sidebar"
-                    style="padding: 25px 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; height: fit-content;">
-                    <div style="border-radius: 50%; overflow: hidden; width: 100px; height: 100px; box-shadow: 0 8px 25px rgba(0,0,0,0.15); margin-top: 0px; transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); cursor: pointer;"
-                        onmouseover="this.style.transform='rotate(360deg) scale(1.05)'"
-                        onmouseout="this.style.transform='rotate(0deg) scale(1)'">
-                        <img src="./assets/images/images.jpg" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;">
-                    </div>
-                    <div style="text-align: center; margin-top: 10px;">
-                        <h2
-                            style="font-size: 1.6rem; font-weight: 700; color: var(--main-text); margin: 0; letter-spacing: -0.5px;">
-                            DayDReam</h2>
-                        <p
-                            style="font-size: 0.8rem; color: var(--meta-text); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 5px;">
-                            TURNING CHAOS INTO ALGORITHMS</p>
-                    </div>
-                    <div
-                        style="display: flex; justify-content: space-around; width: 100%; margin: 10px 0; padding: 15px 0; border-top: 1px solid var(--glass-border); border-bottom: 1px solid var(--glass-border);">
-                        <div style="text-align: center;">
-                            <div style="font-size: 0.8rem; color: var(--meta-text); margin-bottom: 4px;">Repos</div>
-                            <div id="github-repos"
-                                style="font-size: 1.3rem; font-weight: 500; color: var(--accent-color);">-</div>
-                        </div>
-                        <div style="text-align: center;">
-                            <div style="font-size: 0.8rem; color: var(--meta-text); margin-bottom: 4px;">Followers</div>
-                            <div id="github-followers"
-                                style="font-size: 1.3rem; font-weight: 500; color: var(--accent-color);">-</div>
-                        </div>
-                        <div style="text-align: center;">
-                            <div style="font-size: 0.8rem; color: var(--meta-text); margin-bottom: 4px;">Following</div>
-                            <div id="github-following"
-                                style="font-size: 1.3rem; font-weight: 500; color: var(--accent-color);">-</div>
-                        </div>
-                    </div>
-                    <button onclick="window.open('https://github.com/dayDReam-10', '_blank')"
-                        style="background: var(--accent-color); color: white; border: none; padding: 10px 25px; border-radius: 25px; font-size: 0.8rem; font-weight: 700; cursor: pointer; transition: 0.3s; width: 85%; margin-top: 10px;">FOLLOW
-                        ME</button>
-                </div>
-            </div>
-
-            <section class="music-widget" aria-labelledby="music-title">
-                <div class="music-heading">
-                    <span class="music-icon" aria-hidden="true">♫</span>
-                    <h2 id="music-title">RECENTLY PLAYED</h2>
-                    <span class="music-provider">KUGOU</span>
-                </div>
-                <p class="music-message" id="music-message" role="status">最近播放还在准备中</p>
-                <div class="music-login" id="music-login" hidden>
-                    <button class="music-login-button" id="music-login-start" type="button">连接酷狗</button>
-                    <img class="music-qr" id="music-qr" alt="酷狗登录二维码" hidden>
-                    <button class="music-login-button" id="music-login-reset" type="button" hidden>重新授权</button>
-                </div>
-                <ol class="music-list" id="music-list" hidden></ol>
-            </section>
-
-            <!-- 标签模块 (圆角药丸样式) -->
-            <div class="tags-widget">
-                <div class="tags-title">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
-                        <line x1="7" y1="7" x2="7.01" y2="7"></line>
-                    </svg>
-                    KNOWLEDGE_BASE
-                </div>
-                <div class="tags-cloud">
-                    <span class="tag-item">Calculus</span>
-                    <span class="tag-item">Linear Algebra</span>
-                    <span class="tag-item">Cyber Security</span>
-                    <span class="tag-item">Reverse Engineering</span>
-                    <span class="tag-item">Pwn</span>
-                    <span class="tag-item">C++</span>
-                    <span class="tag-item">Python</span>
-                    <span class="tag-item">C</span>
-                    <span class="tag-item">Java</span>
-                </div>
-            </div>
-        </aside>
     </main>
-
-    <footer>
-        <div class="footer-content">
-            <div class="footer-stats">
-                <div class="stat-item">
-                    <div class="sync-dot"></div>
-                    <span id="sync-status">GITHUB_SYNC: CONNECTING</span>
-                </div>
-                <div class="stat-item">
-                    <span>UPTIME: <span id="uptime-val">365D 12H</span></span>
-                </div>
-            </div>
-            <p>&copy; 2024 DAYDREAM SYSTEM JOURNAL. ALL RIGHTS RESERVED.</p>
-        </div>
-    </footer>
-
-
-    <!-- 博客浮窗盒子 -->
-    <div class="blog-modal-overlay" id="blog-modal-overlay">
-        <div class="blog-modal-content">
-            <div class="blog-modal-header">
-                <span class="blog-modal-title">DAYDREAM_BLOG \\</span>
-                <button class="blog-modal-close" id="blog-modal-close">×</button>
-            </div>
-            <div class="blog-modal-body">
-                <!-- 这里的表单将被移除，后续仅用于展示笔记详情 -->
-            </div>
-        </div>
-    </div>
-
-
-    <!-- 笔记数据文件加载 (通过 build_notes.ps1 生成) -->
-
-
-    <script src="assets/js/common.js"></script>
-    <script src="assets/data/notes_data.js"></script>
-    <script src="assets/js/github.js"></script>
-    <script src="assets/js/index.js"></script>
-    <script src="assets/js/music-config.js"></script>
-    <script src="assets/js/music.js"></script>
 </body>
-
 </html>
