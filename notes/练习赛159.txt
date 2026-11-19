@@ -1,0 +1,348 @@
+Title: ACM 复习
+DateTime: 2026.11.19 / 10:00
+Id: 20261119-acm-nk159
+Order: 15
+Status: ACM
+Color: #ff5500
+Summary: ACM 复健
+---
+# NK159
+
+<https://ac.nowcoder.com/acm/contest/142560>
+
+## A
+
+### 题面
+
+```text
+有三盏彩灯，最初显示的颜色分别为 a, b, c 每盏灯都按照如下顺序循环变色：
+0 -> 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 0 -> ...
+
+每按一次按钮，第一盏灯沿上述顺序前进 1 步，第二盏灯前进 2 步，第三盏灯前进 3 步，三盏灯同时完成变化 
+Flower 希望三盏灯显示相同的颜色 请你求出最少需要按多少次按钮（允许不按按钮） 如果它们永远都无法显示相同的颜色，请输出 -1
+```
+
+### 题解
+
+注意到跑 7 轮直接回原位 没啥好说的 查 7 轮即可
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+#define int long long
+
+signed main(){
+    int T;
+    cin>>T;
+    while(T--){
+        int a,b,c;
+        int ans =-1;
+        cin>>a>>b>>c;
+        //注意到7步就回原位了
+        for(int i=0;i<=6;i++){
+            if(a==b&&b==c&&a==c){
+                ans=i;
+                break;
+            }
+            if(a!=b&&b!=c&&a!=c&&i<7){
+                a = (a + 1) % 7;
+                b = (b + 2) % 7;
+                c = (c + 3) % 7;
+            }
+        }
+        cout << ans << "\n";
+    }
+    return 0;
+}
+```
+
+## B
+
+### 题面
+
+```text
+有 n 位游客从左到右站成一排，编号为 1,2,...,n，身高依次为 h_1,h_2,...,h_n 他们的面朝方向用字符串 s = s_1s_2...s_n 表示，其中 s_i = L 表示第 i 位游客面朝左，s_i = R 表示面朝右 
+Flower 在队伍的左端、右端各放置一台相机，按照以下规则判断能否拍到游客的正脸：
+- 左侧相机能拍到第 i 位游客的正脸，当且仅当其面朝左，且其左侧所有游客的身高都严格小于 h_i；
+- 右侧相机能拍到第 i 位游客的正脸，当且仅当其面朝右，且其右侧所有游客的身高都严格小于 h_i
+拍照前，你可以选择一个整数 k (0 <= k <= n)，让前 k 位游客各转身一次，即面朝左的改为面朝右，面朝右的改为面朝左，位置、身高不变 随后，两台相机各拍摄一张照片
+
+请你求出至少在一张照片中露出正脸的游客人数的最大值，并给出一个对应的 k
+```
+
+### 题解
+
+最少要一次遍历一次全数组，想法是先求出基础分，即什么都不变时的分数，然后在维护一个数组记录这个人转不转身是否可见，遍历时打擂台，记录最大分数和K
+
+```cpp
+
+#include <bits/stdc++.h>
+using namespace std;
+#define int long long 
+//发现高的人中间都是无效的
+void solve(){
+    int n;
+    cin >> n;
+    vector<long long> h(n);
+    for (int i = 0; i < n; i++) {
+        cin >> h[i];
+    }
+    string s;
+    cin >> s;
+    vector<int> Lmax(n, 0), Rmax(n, 0);
+    int max_left = 0, max_right = 0;
+    for(int i=0,j=n-1;i<n;i++,j--){
+        //
+        Lmax[i] = max_left;          
+        max_left = max(max_left, h[i]); 
+        Rmax[j] = max_right;         
+        max_right = max(max_right, h[j]);
+    }
+    int score=0;
+    //维护一下，一是每个人被改的时候总分的改变量，一个是是否能被看到，一个是什么都不改的时候的分数
+    vector<int> lseen(n,0),rseen(n,0);
+    for(int i=0;i<n;i++){
+        if(h[i]>Lmax[i]) lseen[i]=1;
+        if(h[i]>Rmax[i]) rseen[i]=1; 
+        if(s[i]=='L') score+=lseen[i];
+        else score+=rseen[i];
+        //把什么都不变的基础分算出来
+    }
+    //得到了可见数组
+    long long cur_score = score;
+    long long max_score = score;
+    int k = 0;
+
+for (int i = 0; i < n; i++) {
+    // 第 i 个人翻转带来的改变量
+    if (s[i] == 'L') {
+        cur_score += rseen[i] - lseen[i];
+    } else {
+        cur_score += lseen[i] - rseen[i];
+    }
+    // 翻转了前 i+1 个人，也就是 k = i + 1
+    if (cur_score > max_score) {
+        max_score = cur_score;
+        k = i + 1;
+    }
+}
+cout << max_score << " " << k << "\n";   
+}
+signed main(){
+    ios::sync_with_stdio(false);
+    cin.tie(0);
+    int T;
+    cin>>T;
+    while(T--){
+        solve();   
+    }
+}
+```
+
+## C
+
+### 题面
+
+```text
+一条小路有 n 格，从左到右编号为 1 到 n 各格上写着的正整数用数组 a_1,a_2,...,a_n 表示，其中 a_i 表示第 i 格上的数字 
+Flower 要把整条小路划分为若干个非空的连续段，每一格恰好属于一段 
+对于划分出的一段 [l,r]，Flower 会在两端各放置一个路标：左端的路标从第 l 格指向第 l+a_l 格；右端的路标从第 r 格指向第 r-a_r 格 
+一段 [l,r] 合法，当且仅当两个路标指向同一格，且该格严格位于段内，即 l < l+a_l = r-a_r < r 段内其余格上的数字不产生限制 
+
+请你将整条小路划分为尽可能少的合法段，并给出一种方案 如果无法完成划分，输出 -1 
+```
+
+### 题解
+
+当成区间维护题会很复杂，如果视作图论就只剩下简单的 BFS 了
+
+如果视作图论，那么就是固定起点1找所有能到的r边，对每个r点继续r+1下一段
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+#define int long long
+
+void solve() {
+    int n;
+    cin >> n;
+    vector<int> a(n + 1);
+    for (int i = 1; i <= n; i++) {
+        cin >> a[i];
+    }
+//建图
+    vector<vector<int>> bucket(n + 1);
+    for (int r = 1; r <= n; r++) {
+        int mid = r - a[r];
+        if (mid >= 1 && mid < r) {
+            bucket[mid].push_back(r);
+        }
+    }
+//bfs
+    queue<int> q;
+    vector<int> pre(n + 2, -1);
+    
+    q.push(1);
+    pre[1] = 0;
+
+    while (!q.empty()) {
+        int u = q.front();
+        q.pop();
+
+        if (u == n + 1) break;
+
+        int mid = u + a[u];
+        if (mid > n || bucket[mid].empty()) continue;
+
+        for (int r : bucket[mid]) {
+            if (r > mid) {
+                if (pre[r + 1] == -1) {
+                    pre[r + 1] = u;
+                    q.push(r + 1);
+                }
+            }
+        }
+        bucket[mid].clear();
+    }
+
+    if (pre[n + 1] == -1) {
+        cout << -1 << "\n";
+        return;
+    }
+
+    vector<int> ans;
+    int cur = n + 1;
+    while (cur != 1) {
+        ans.push_back(cur - 1);
+        cur = pre[cur];
+    }
+    reverse(ans.begin(), ans.end());
+
+    cout << ans.size() << "\n";
+    for (int i = 0; i < ans.size(); i++) {
+        cout << ans[i] << (i == ans.size() - 1 ? "" : " ");
+    }
+    cout << "\n";
+}
+
+
+signed main(){
+    ios::sync_with_stdio(false);
+    cin.tie(0);
+    int T;
+    cin>>T;
+    while(T--){
+        solve();   
+    }
+}
+```
+
+## D
+
+### 题面
+
+```text
+游园会有 n 个广场和 m 条双向道路组成，广场编号为 1 到 n 任意两个广场之间都可以通过道路互相到达，每条道路连接两个不同的广场，同一对广场之间至多有一条道路 
+Alice 最初位于广场 s，Bob 最初位于广场 t，且 s, t 之间有一条道路 每次移动只选择其中一人，让其沿一条道路移动到相邻广场，另一人留在原地 每次移动后，必须满足以下条件：
+- 两人位于不同的广场；
+- 两人所在广场之间的最短距离不超过 k，其中最短距离指连接这两个广场所需经过的最少道路数 
+
+请你求出使 Alice 位于广场 t、Bob 位于广场 s 所需的最少移动次数 如果无法交换位置，输出 -1 
+```
+
+### 题解
+
+先 Floyd 预处理一下最短路径 写个 BFS 就行
+
+```cpp
+
+#include <bits/stdc++.h>
+using namespace std;
+#define int long long
+
+const int N = 610;
+const int M = 6050;//2n
+
+int d[N][N];//用于Floyd
+int dist[N][N];//状态BFS
+//前链式向星
+int head[N], nxt[M], to[M], idx;
+
+void add_edge(int u, int v) {
+    to[idx] = v;
+    nxt[idx] = head[u];
+    head[u] = idx++;
+}
+
+void solve() {
+    int n, m, s, t, k;
+    cin >> n >> m >> s >> t >> k;
+    idx = 0;
+    //初始化
+    for (int i = 1; i <= n; i++) {
+        head[i] = -1; // 重置链式前向星
+        for (int j = 1; j <= n; j++) {
+            if (i == j) d[i][j] = 0;
+            else d[i][j] = 1e9; // Floyd 初始化
+            dist[i][j] = -1;    // BFS 初始化
+        }
+    }
+    //建图
+    for (int i = 0; i < m; i++) {
+        int u, v;
+        cin >> u >> v;
+        add_edge(u, v);
+        add_edge(v, u);
+        d[u][v] = d[v][u] = 1; // 双向边权重为1
+    }
+    //预处理
+    for (int kk = 1; kk <= n; kk++) {
+        for (int i = 1; i <= n; i++) {
+            for (int j = 1; j <= n; j++) {
+                d[i][j] = min(d[i][j], d[i][kk] + d[kk][j]);
+            }
+        }
+    }
+    // BFS
+    queue<pair<int, int>> q;
+    q.push({s, t});
+    dist[s][t] = 0;
+    while (!q.empty()) {
+        auto [u, v] = q.front();
+        q.pop();
+        // 到达目标状态
+        if (u == t && v == s) {
+            cout << dist[u][v] << "\n";
+            return;
+        } 
+        // Alice 移动
+        for (int i = head[u]; i != -1; i = nxt[i]) {
+            int next_u = to[i];
+            if (next_u != v && d[next_u][v] <= k && dist[next_u][v] == -1) {
+                dist[next_u][v] = dist[u][v] + 1;
+                q.push({next_u, v});
+            }
+        }
+        // Bob 移动
+        for (int i = head[v]; i != -1; i = nxt[i]) {
+            int next_v = to[i];
+            if (u != next_v && d[u][next_v] <= k && dist[u][next_v] == -1) {
+                dist[u][next_v] = dist[u][v] + 1;
+                q.push({u, next_v});
+            }
+        }
+    }
+    // 无解
+    cout << -1 << "\n";
+}
+signed main() {
+    ios::sync_with_stdio(false);
+    cin.tie(0);
+    int T;
+    cin >> T;
+    while (T--) {
+        solve();
+    }
+    return 0;
+}
+```
